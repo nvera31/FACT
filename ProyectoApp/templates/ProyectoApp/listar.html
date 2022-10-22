@@ -1,0 +1,46 @@
+{% extends "index/base.html" %}
+
+{% load static %}
+
+
+
+{% block content %}
+
+
+<div class="container mt-3">
+    <h2>{{ title }}</h2>
+    <p>CATEGORIAS:</p>            
+    <table class="table table-primary" id="data" >
+      <thead>
+        <tr>
+          <th style="width: 10%;">Nro</th>
+          <th style="width: 20%;">Nombre</th>
+          <th style="width: 50%;">Descripcion</th>
+          <th style="width: 20%;">Opciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- {% for c in object_list %}
+            <tr>
+                <td>{{ c.id }}</td>
+                <td>{{ c.nombre }}</td>
+                <td>
+                    <a href="{% url 'actualizar' c.id %}" class="btn btn-info"><i class="bi bi-pencil-square"></i></a>
+                    <a href="{% url 'eliminar' c.id %}" class="btn btn-danger"><i class="bi bi-trash-fill"></i></a>
+                </td>
+            </tr>
+        {% endfor %} -->
+      </tbody>
+    </table>
+
+    <div class="card-footer">
+        <a href="{{ create_url  }}" class="btn btn-primary btnTest"><i class="bi bi-plus-circle"></i> Nuevo</a>
+    </div>
+</div>
+   
+ 
+  
+{% endblock %}
+
+ <!-- Contenido Cambiante -->
+ 

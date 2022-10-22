@@ -1,0 +1,96 @@
+{% extends "index/base.html" %}
+
+{% load static %}
+
+{% block content %}
+    <form method="post" action=".">
+        <div class="container mt-3">
+            <h2>Formulario</h2>
+            <p>Codigo Humano</p>            
+            <h3>
+                {% if action == 'add' %}
+                    <i class="bi bi-plus-circle"></i>
+
+                {% else %}
+                    <i class="bi bi-pencil-square"></i>
+
+                {% endif %}
+
+                {{ title }}
+            </h3>
+        
+
+            <hr>
+            {% csrf_token %}
+
+            
+
+            <input type="hidden" name="action" value="{{ action }}">
+
+            <!--MANEJO DE ERRORES-->
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Alerta!</strong> 
+                <ul>
+                    {% for field  in form %}
+                        {% for error in field.errors %}
+
+                            <li>{{ error }}</li>
+
+
+                        {% endfor %}
+                    {% endfor %}
+
+                    {% for error in form.non_field_errors %}
+
+                        <li>{{ error }}</li>
+
+                    {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+              <!--Insertar todos los campos de la tabla en el formulario-->
+            {% for field  in form.visible_fields %}
+                <div class="form-group">
+                    <label>{{ field.label }}:</label>
+                    {{ field }}
+                </div>
+                
+            {% endfor %}
+            
+            <hr>
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary btnTest"><i class="bi bi-plus-circle"></i> Guardar</button>
+                <a href="{{ list_url }}" class="btn btn-info btnTest"><i class="bi bi-x-circle"></i> Cancelar</a>
+            </div>
+        </div>
+        
+    </form>
+
+
+
+{% endblock %}
+
+{% block lolo %}
+
+<script>
+
+   //PRESIONA BOTON ENVIAR Y SE GUARDA NUEVA CATEGORIA
+    $('form').on('submit', function (e){
+        e.preventDefault();
+        var parametros = $(this).serializeArray();
+
+        submit_with_ajax(window.location.pathname,parametros, function(){
+            location.href = '{{ list_url }}';
+        });
+        
+
+        
+    });
+
+
+    
+</script>
+                    
+
+{% endblock %}
