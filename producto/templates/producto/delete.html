@@ -58,14 +58,13 @@
         e.preventDefault();
         var parametros = new FormData(this);
 
-        submit_with_ajax(window.location.pathname,'Notificacion', 'Seguro de Eliminar?',parametros, function(){
+        submit_with_ajax(window.location.pathname,'Notificacion', 'Seguro de Eliminar Pro?', parametros, function(){
             location.href = '{{ list_url }}';
         });
         
 
         
     });
-
     
     
 </script>

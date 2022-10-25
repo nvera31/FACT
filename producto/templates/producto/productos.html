@@ -1,0 +1,58 @@
+{% extends "index/base.html" %}
+
+{% load static %}
+
+
+
+{% block content %}
+
+
+<div class="container mt-3">
+    <h2>{{ title }}</h2>
+              
+    <table class="table table-primary" id="data" >
+      <thead>
+        <tr>
+            <th scope="col" style="width: 10%;">Nro</th>
+            <th scope="col" style="width: 20%;">Nombre</th>
+            <th scope="col" style="width: 25%;">Categoria</th>
+            <th scope="col" style="width: 10%;">Imagen</th>
+            <th scope="col" style="width: 15%;">Precio</th>
+            <th scope="col" style="width: 20%;">Opciones</th>
+        </tr>
+      </thead>
+      <tbody>
+         {% for c in object_list %}
+         <tr>
+            <td>{{ c.id }}</td>
+            <td>{{ c.nombre }}</td>
+            <td>{{ c.categoria.nombre }}</td>
+            <td class="text-center">
+                <!-- {{ c.imagen }} -->
+                <img src="{{ c.get_image }}" class="img-fluid d-block mx-auto" style="width: 20px; height: 20px;">  
+            </td>
+            <td>{{ c.pvp }}</td>
+            <td class="text-center">
+                <a href="{% url 'product_update' c.id %}" class="btn btn-warning btn-xs btn-flat">
+                    <i class="bi bi-pencil-square"></i>
+                </a>
+                <a href="{% url 'product_delete' c.id %}" class="btn btn-danger btn-xs btn-flat">
+                    <i class="bi bi-trash-fill"></i>
+                </a>
+            </td>
+        </tr>
+        {% endfor %} 
+      </tbody>
+    </table>
+
+    <div class="card-footer">
+        <a href="{{ create_url  }}" class="btn btn-primary btnTest"><i class="bi bi-plus-circle"></i> Nuevo</a>
+    </div>
+</div>
+   
+ 
+  
+{% endblock %}
+
+ <!-- Contenido Cambiante -->
+ 

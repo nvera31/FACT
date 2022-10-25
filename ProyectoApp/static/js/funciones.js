@@ -16,12 +16,12 @@ function errores(obj){
 }
 
 //FUNCION PARA ALERTAS JQUERY
-function submit_with_ajax(url,parametros,callback){
+function submit_with_ajax(url,title,content,parametros,callback){
     $.confirm({
         theme: 'bootstrap',
-        title: 'Confirmación',
+        title: title,
         icon: 'bi bi-info-circle',
-        content: 'Seguro de seguir?',
+        content: content,
         columnClass: 'small',
         typeAnimated: true,
         cancelButtonClass: 'btn-primary',
@@ -37,7 +37,9 @@ function submit_with_ajax(url,parametros,callback){
                          url: url,// window.location.pathname,
                          type: 'POST',
                          data: parametros,
-                         dataType: 'json'
+                         dataType: 'json',
+                         processData: false,
+                         contentType: false,
                      }).done(function (data) {
                         console.log(data);
                          if(!data.hasOwnProperty('error')){

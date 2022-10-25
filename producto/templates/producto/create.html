@@ -1,9 +1,9 @@
 {% extends "index/base.html" %}
 
 {% load static %}
-
+{% load widget_tweaks %}
 {% block content %}
-    <form method="post" action=".">
+    <form method="post" action="." enctype="multipart/form-data">
         <div class="container mt-3">
             <h2>Formulario</h2>
             <p>Codigo Humano</p>            
@@ -51,10 +51,10 @@
             {% endif %}
               <!--Insertar todos los campos de la tabla en el formulario-->
             {% for field  in form.visible_fields %}
-                <div class="form-group">
-                    <label>{{ field.label }}:</label>
-                    {{ field }}
-                </div>
+            <div class="form-group">
+                <label for="email">{{ field.label }}:</label>
+                {{ field|add_class:'form-control'|attr:'autocomplete:off' }}
+            </div>
                 
             {% endfor %}
             
@@ -78,17 +78,14 @@
    //PRESIONA BOTON ENVIAR Y SE GUARDA NUEVA CATEGORIA
     $('form').on('submit', function (e){
         e.preventDefault();
+        //var parametros = $(this).serializeArray();
         var parametros = new FormData(this);
-
+       
         submit_with_ajax(window.location.pathname,'Notificacion', 'Seguro de Realizar la siguiente accion?', parametros, function(){
             location.href = '{{ list_url }}';
         });
         
-
-        
     });
-
-
     
 </script>
                     

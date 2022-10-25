@@ -7,6 +7,7 @@ from django.db import models
 from datetime import datetime
 
 from django.forms.models import model_to_dict
+from Proyecto.settings import MEDIA_URL, STATIC_URL
 from ProyectoApp.choices import gender_choices
 # Create your models here.
 #Primera Practica
@@ -66,11 +67,16 @@ class Categoria(models.Model):
 class Producto(models.Model):
     nombre = models.CharField(max_length=150, verbose_name= 'Nombre', unique=True)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
-    imagen = models.ImageField(upload_to='producto/%Y,%m,%d', null=True, blank=True)
+    imagen = models.ImageField(upload_to="producto", null=True, blank=True)
     pvp = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
 
     def __str__(self):
         return self.nombre
+
+    def get_image(self):
+        if self.imagen:
+            return '{}{}'.format(MEDIA_URL, self.imagen)
+        return '{}{}'.format(STATIC_URL, 'img/empty.png')
 
     class Meta:
         verbose_name = 'Producto'
