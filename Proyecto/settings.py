@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'index',
     'widget_tweaks',
     'producto',
+    'user',
 ]
 
 MIDDLEWARE = [
@@ -56,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'crum.CurrentRequestUserMiddleware',
 ]
 
 ROOT_URLCONF = 'Proyecto.urls'
@@ -140,3 +142,6 @@ LOGIN_URL = '/login/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 MEDIA_URL = '/media/'
+
+#USERS
+AUTH_USER_MODEL = 'user.User'

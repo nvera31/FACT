@@ -1,0 +1,93 @@
+{% extends "index/base.html" %}
+
+{% load static %}
+
+{% block content %}
+    <form method="post" action=".">
+        <div class="container mt-3">
+            
+                {{ title }}
+            </h3>
+            
+            <div class="form-group">
+                <label>Categorias:</label>
+                {{ form.categorias}}
+            </div>
+
+            <div class="form-group">
+                <label>Productos:</label>
+                {{ form.productos}}
+            </div>
+
+            <hr>
+            
+        </div>
+        
+    </form>
+
+
+
+{% endblock %}
+
+{% block lolo %}
+
+<script>
+    var select_productos = $('select[name="productos"]');
+    $(function (){
+
+        $('.select2').select2({
+            
+        })
+
+        $('select[name="categorias"]').on('change', function(){
+            var id = $(this).val();
+            
+            var opcion = '<option value="">xxxxxxxxxxxxxx</option>';
+            if(id === ''){
+                select_productos.html(opcion);
+                return false;
+            }
+            $.ajax({
+                        //TRABAJA CON LA VISTA ACTUAL
+                         url: window.location.pathname,
+                         type: 'POST',
+                         data: {
+                            'action': 'buscar',
+                            'id': id
+                         },
+                         dataType: 'json',
+                         
+                     }).done(function (data) {
+                        console.log(data);
+                         if(!data.hasOwnProperty('error')){
+                            select_productos.html('').select2({
+                                data: data
+            
+                            });
+
+                            // $.each(data, function(key, value){
+                            //     opcion+='<option value="'+value.id+'">'+value.name+'</option>';
+                            // })
+                            return false;
+                         }
+                         errores(data.error);
+    
+                     }).fail(function (jqXHR, textStatus, errorThrown) {
+                         alert(textStatus+':'+errorThrown);
+                     }).always(function (data) {
+                        //select_productos.html(opcion);
+                     });
+        });
+
+        select_productos.on('change', function (){
+            var value = select_productos.select2('data')[0];
+            console.log(value)
+        });
+    });
+  
+
+    
+</script>
+                    
+
+{% endblock %}

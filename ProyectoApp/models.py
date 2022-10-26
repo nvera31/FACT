@@ -5,10 +5,11 @@ from tabnanny import verbose
 from unittest.util import _MAX_LENGTH
 from django.db import models
 from datetime import datetime
-
+from crum import get_current_user
 from django.forms.models import model_to_dict
 from Proyecto.settings import MEDIA_URL, STATIC_URL
 from ProyectoApp.choices import gender_choices
+from Proyecto.models import BaseModel
 # Create your models here.
 #Primera Practica
 # class Type(models.Model):
@@ -47,12 +48,22 @@ from ProyectoApp.choices import gender_choices
 #         ordering = ['id']
 
 #Tablas Finales
-class Categoria(models.Model):
+class Categoria(BaseModel):
     nombre =models.CharField(max_length=150, verbose_name= 'Nombre', unique=True)
     desc = models.CharField(max_length=500, verbose_name= 'Descripcion', null=True, blank=True)
 
     def __str__(self):
         return self.nombre
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+       user = get_current_user()
+       if user is not None:
+          if not self.pk:
+            self.user_creador = user
+          else:
+            self.user_actualizo = user
+       super(Categoria, self).save()
+
 
     def toJSON(self):
         item = model_to_dict(self)        

@@ -31,6 +31,7 @@ class CategoriaForm(ModelForm):
             ),
 
         }
+        exclude = ['user_actualizo', 'user_creador']
 
 
     # def clean(self):
@@ -59,14 +60,25 @@ class ProductoForm(ModelForm):
 
 
 #CODIGO DE GUARDAR EN FORMULARIO
-    def save(self, commit=True):
-        data = {}
-        form = super()
-        try:
-            if form.is_valid():
-                form.save()
-            else:
-                data['error'] = form.errors
-        except Exception as e:
-            data['error'] = str(e)
-        return data
+    # def save(self, commit=True):
+    #     data = {}
+    #     form = super()
+    #     try:
+    #         if form.is_valid():
+    #             form.save()
+    #         else:
+    #             data['error'] = form.errors
+    #     except Exception as e:
+    #         data['error'] = str(e)
+    #     return data
+
+
+class TestForm(Form):
+    categorias = ModelChoiceField(queryset=Categoria.objects.all(), widget=Select(attrs={
+        'class': 'form-control select2',
+        'style': 'width: 100%'
+    }))
+
+    productos = ModelChoiceField(queryset=Producto.objects.none(), widget=Select(attrs={
+        'class': 'form-control select2'
+    }))

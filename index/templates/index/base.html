@@ -18,6 +18,11 @@
     <!--JQUERYCONFIRM-->
     <link href="{% static 'vendor/jquery-confirm-v3.3.4/jquery-confirm.min.css' %}" rel="stylesheet" >
 
+    <!--SELECT2-->
+    <link rel="stylesheet" href="{% static 'vendor/select2-4.0.13/css/select2.min.css' %}">
+    <!-- <link rel="stylesheet" href="{% static 'vendor/select2-4.0.13/css/select2-bootstrap4.min.css' %}"> -->
+
+
 </head>
 <body>
 <!--Barra Lateral-->
@@ -50,6 +55,12 @@
             <li class=""><a href="#" class="text-decoration-none px-3 py-2 d-block"><i class="bi bi-bell"></i>   Notificaciones</a></li>
 
         </ul>
+
+        <hr>
+
+        <div >
+            <span style="color: #d9cc00">Perfil: </span>   <img src="{{ request.user.get_image }}" alt="perfil"  width="100" height="100">
+        </div>
     </div>
 
     <!-- NavBar -->
@@ -121,6 +132,8 @@
     <!--JQUERYCONFIRM-->
     <script src="{% static 'vendor/jquery-confirm-v3.3.4/jquery-confirm.min.js' %}"></script>
 
+    <!--SELECT2-->
+    <script src="{% static 'vendor/select2-4.0.13/js/select2.min.js' %}"></script>
 
     <script>
         $(".sidebar ul li").on('click', function(){

@@ -1,7 +1,7 @@
 from multiprocessing import context
 from urllib import request
 from django.urls import reverse_lazy,reverse
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView, FormView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, FormView, TemplateView
 from re import template
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
@@ -9,7 +9,7 @@ from .models import *
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.contrib.auth.decorators import login_required
-from .forms import CategoriaForm
+from .forms import CategoriaForm, TestForm
 # Create your views here.
 
 
@@ -180,4 +180,38 @@ class CategoriaFormView(FormView):
         context['action'] = 'edit'
         # REDIRECCIONA A LISTAR
         context['list_url'] = reverse_lazy('listar')
+        return context
+
+
+
+#TESTVIEWS SELECT2
+class TestView(TemplateView):
+    template_name = 'ProyectoApp/test.html'
+
+    @method_decorator(csrf_exempt)
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs) :
+        return super().dispatch(request, *args, **kwargs)
+        
+    def post(self, request, *args, **kwargs):
+        data = {}
+        try:
+            action = request.POST['action']
+
+            if action == 'buscar':
+               data = []
+               for i in Producto.objects.filter(categoria_id=request.POST['id']):
+                    data.append({'id': i.id, 'text': i.nombre, 'data': i.categoria.toJSON()})
+            else:
+                data['error'] = 'No ha Ingresado'
+            
+        except Exception as e:
+             data['error'] = str(e)
+        
+        return JsonResponse(data, safe=False)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Selects | Django'
+        context['form'] = TestForm()
         return context
