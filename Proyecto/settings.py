@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'widget_tweaks',
     'producto',
     'user',
+    'clientes',
 ]
 
 MIDDLEWARE = [
@@ -129,7 +130,7 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #REDIRECCIONA DESPUES DEL LOGIN A LISTAR
-LOGIN_REDIRECT_URL = '/categoria/listar/'
+LOGIN_REDIRECT_URL = '/index/'
 
 #REDIRECCIONA A LOGIN DESPUES DE SALIR
 LOGOUT_REDIRECT_URL = '/login/'

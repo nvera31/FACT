@@ -10,17 +10,21 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.contrib.auth.decorators import login_required
 from .forms import CategoriaForm, TestForm
+from ProyectoApp.mixin import IsSuperUserMixin, ValidacionPermiso
+
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 # Create your views here.
 
 
 
 #ENLISTA LA TABLA CATEGORIA
-class CategoriaListView(ListView):
+class CategoriaListView(LoginRequiredMixin, ValidacionPermiso,ListView):
+    permission_required = 'ProyectoApp.change_categoria'
     model = Categoria
     template_name = 'ProyectoApp/listar.html'
 
     @method_decorator(csrf_exempt)
-    @method_decorator(login_required)
+    #@method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
@@ -50,7 +54,9 @@ class CategoriaListView(ListView):
         return context
 
 #GUARDA NUEVAS CATEGORIAS
-class CategoriaCreateView(CreateView):
+class CategoriaCreateView(ValidacionPermiso,CreateView):
+    permission_required = 'ProyectoApp.view_categoria'
+    url_redirect = reverse_lazy('listar')
     model = Categoria
     form_class = CategoriaForm
     template_name = 'ProyectoApp/create.html'
@@ -202,6 +208,12 @@ class TestView(TemplateView):
                data = []
                for i in Producto.objects.filter(categoria_id=request.POST['id']):
                     data.append({'id': i.id, 'text': i.nombre, 'data': i.categoria.toJSON()})
+            elif action == 'autocomplete':
+                data = []
+                for i in Categoria.objects.filter(nombre__icontains=request.POST['term']):
+                    item = i.toJSON()
+                    item['text'] = i.nombre
+                    data.append(item)
             else:
                 data['error'] = 'No ha Ingresado'
             
@@ -215,3 +227,5 @@ class TestView(TemplateView):
         context['title'] = 'Selects | Django'
         context['form'] = TestForm()
         return context
+
+

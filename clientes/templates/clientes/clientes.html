@@ -1,0 +1,105 @@
+{% extends "index/base.html" %}
+
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+
+<div class="container mt-3">
+    <h2>{{ title }}</h2>
+              
+    <table class="table table-primary" id="dato" >
+      <thead>
+        <tr>
+            <th scope="col" style="width: 10%;">Nro</th>
+            <th scope="col" style="width: 15%;">Nombres</th>
+            <th scope="col" style="width: 15%;">Apellidos</th>
+            <th scope="col" style="width: 10%;">Dni</th>
+            <th scope="col" style="width: 15%;">Fecha de nacimiento</th>
+            <th scope="col" style="width: 15%;">Sexo</th>
+            <th scope="col" style="width: 20%;">Opciones</th>
+        </tr>
+      </thead>
+      <tbody>
+         <!-- {% for cli in object_list %}
+         <tr>
+            <td>{{ cli.id }}</td>
+            <td>{{ cli.nombre }}</td>
+            <td>{{ cli.apellido }}</td>
+            <td>{{ cli.dni }}</td>
+            <td>{{ cli.f_nacimiento }}</td>
+            <td>{{ cli.direccion }}</td>
+            <td>{{ cli.sexo }}</td>
+            <td class="text-center">
+                <a href="#" class="btn btn-warning btn-xs btn-flat">
+                    <i class="bi bi-pencil-square"></i>
+                </a>
+                <a href="#" class="btn btn-danger btn-xs btn-flat">
+                    <i class="bi bi-trash-fill"></i>
+                </a>
+            </td>
+        </tr>
+        {% endfor %}  -->
+      </tbody>
+    </table>
+
+    <div class="card-footer">
+        <a class="btn btn-primary btnTest  btnAdd"><i class="bi bi-plus-circle"></i> Nuevo</a>
+    </div>
+</div>
+   
+ 
+  
+{% endblock %}
+
+
+
+{% block javascript %}
+<!-- The Modal -->
+<div class="modal" id="myModalCliente">
+    <form method="post" action="." enctype="multipart/form-data">
+        <div class="modal-dialog">
+            <div class="modal-content">
+        
+              <!-- Modal Header -->
+              <div class="modal-header">
+                <h4 class="modal-title">
+                  <i></i> <span></span>
+                </h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+        
+              <!-- Modal body -->
+              <div class="modal-body">
+                <div class="container-fluid">
+                    <input  name="action" type="hidden" value="add">
+                    <input  name="id" id="id" type="hidden" value="0">
+                    {% for field  in form.visible_fields %}
+                    <div class="form-group">
+                        <label for="email">{{ field.label }}:</label>
+                        {{ field|add_class:'form-control'|attr:'autocomplete:off' }}
+                    </div>
+                
+                    {% endfor %}
+                </div>
+                
+              </div>
+        
+              <!-- Modal footer -->
+              <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Salir</button>
+                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Guardar</button>
+              </div>
+        
+            </div>
+        </div>
+    </form>
+    
+</div>
+
+{% endblock %}
+ <!-- Contenido Cambiante -->
+ {% block head_list %}
+ <script src="{% static 'cliente/js/catalogo.js' %}"></script>
+{% endblock %}

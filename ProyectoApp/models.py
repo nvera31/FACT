@@ -106,6 +106,12 @@ class Clientes(models.Model):
     def __str__(self):
         return self.nombre
 
+    def toJSON(self):
+        item = model_to_dict(self)
+        item['sexo'] = {'id': self.sexo, 'nombre': self.get_sexo_display()}
+        item['f_nacimiento'] = self.f_nacimiento.strftime('%Y-%m-%d')
+        return item
+
     class Meta:
         verbose_name = 'Cliente'
         verbose_name_plural = 'Clientes'

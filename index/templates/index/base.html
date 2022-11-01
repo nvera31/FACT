@@ -23,6 +23,9 @@
     <!-- <link rel="stylesheet" href="{% static 'vendor/select2-4.0.13/css/select2-bootstrap4.min.css' %}"> -->
 
 
+    <!--JQUERY UI-->
+    <link href="{% static 'vendor/jquery-ui-1.12.1.custom/jquery-ui.min.css' %}" rel="stylesheet" >
+    
 </head>
 <body>
 <!--Barra Lateral-->
@@ -128,12 +131,19 @@
     <script src="{% static 'vendor/datatables-1.10.20/plugins/responsive-2.2.3/js/responsive.bootstrap4.min.js' %}"></script>
     <script src="{% static 'js/funciones.js' %}"></script>
     <script src="{% static 'js/list.js' %}"></script>
-
+    <!--LISTA_CLIENTE-->
+    <!-- <script src="{% static 'cliente/js/catalogo.js' %}"></script> -->
     <!--JQUERYCONFIRM-->
     <script src="{% static 'vendor/jquery-confirm-v3.3.4/jquery-confirm.min.js' %}"></script>
 
     <!--SELECT2-->
     <script src="{% static 'vendor/select2-4.0.13/js/select2.min.js' %}"></script>
+
+    <!--JQUERY UI-->
+    <script src="{% static 'vendor/jquery-ui-1.12.1.custom/jquery-ui.min.js' %}"></script>
+
+
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         $(".sidebar ul li").on('click', function(){
@@ -184,5 +194,33 @@
                     
 
 {% endblock %}
+
+
+
+{% block javascript %}
+
+{% endblock %}
+
+<!--BLOQUE DE CATALOGO.JS-->
+{% block head_list %}
+ 
+{% endblock %}
+
+
+<script>
+    {% if messages %}
+        var html = '<p>';
+        {% for message in messages %}
+            html+='{{ message }}<br>';
+        {% endfor %}
+        html+='</p>';
+
+        Swal.fire({
+            title: 'Error',
+            html: html,
+            icon: 'error'
+        });
+    {% endif %}
+</script>
 </body>
 </html>

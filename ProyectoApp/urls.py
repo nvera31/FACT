@@ -2,6 +2,7 @@ from django.urls import path
 from ProyectoApp import views
 from producto.views import *
 from django.conf import settings
+from clientes.views import *
 from django.conf.urls.static import static
 urlpatterns = [
     path('listar/', views.CategoriaListView.as_view(), name="listar"),
@@ -18,6 +19,9 @@ urlpatterns = [
 
     #TEST
     path('test/', views.TestView.as_view(), name='test'),
+    
+    #CLIENTES
+    path('clientes/', ClientesView.as_view(), name='cliente'),
 ]
 
 #urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
