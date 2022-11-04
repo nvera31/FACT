@@ -7,14 +7,18 @@ from ProyectoApp.models import *
 from ProyectoApp.forms import ClientesForm
 from django.urls import reverse_lazy,reverse
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from ProyectoApp.mixin import ValidacionPermiso
+
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
 #VISTA DE CLIENTES
-class ClientesView(TemplateView):
+class ClienteListView(LoginRequiredMixin, ValidacionPermiso, ListView):
+    model = Clientes
     template_name = 'clientes/clientes.html'
+    #permission_required = 'erp.view_client'
 
     @method_decorator(csrf_exempt)
-    @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
@@ -26,27 +30,6 @@ class ClientesView(TemplateView):
                 data = []
                 for i in Clientes.objects.all():
                     data.append(i.toJSON())
-            elif action == 'add':
-                cli = Clientes()
-                cli.nombre = request.POST['nombre']
-                cli.apellido = request.POST['apellido']
-                cli.dni = request.POST['dni']
-                cli.f_nacimiento = request.POST['f_nacimiento']
-                cli.direccion = request.POST['direccion']
-                cli.sexo = request.POST['sexo']
-                cli.save()
-            elif action == 'edit':
-                cli = Clientes.objects.get(pk=request.POST['id'])
-                cli.nombre = request.POST['nombre']
-                cli.apellido = request.POST['apellido']
-                cli.dni = request.POST['dni']
-                cli.f_nacimiento = request.POST['f_nacimiento']
-                cli.direccion = request.POST['direccion']
-                cli.sexo = request.POST['sexo']
-                cli.save()
-            elif action == 'delete':
-                cli = Clientes.objects.get(pk=request.POST['id'])
-                cli.delete()
             else:
                 data['error'] = 'Ha ocurrido un error'
         except Exception as e:
@@ -56,7 +39,101 @@ class ClientesView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['title'] = 'Listado de Clientes'
-        context['list_url'] = reverse_lazy('erp:client')
+        context['create_url'] = reverse_lazy('agregar_cliente')
+        context['list_url'] = reverse_lazy('listar_cliente')
         context['entity'] = 'Clientes'
-        context['form'] = ClientesForm()
+        return context
+
+
+class ClienteCreateView(LoginRequiredMixin, ValidacionPermiso, CreateView):
+    model = Clientes
+    form_class = ClientesForm
+    template_name = 'clientes/create.html'
+    success_url = reverse_lazy('listar_cliente')
+    #permission_required = 'erp.add_client'
+    url_redirect = success_url
+
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        data = {}
+        try:
+            action = request.POST['action']
+            if action == 'add':
+                form = self.get_form()
+                data = form.save()
+            else:
+                data['error'] = 'No ha ingresado a ninguna opción'
+        except Exception as e:
+            data['error'] = str(e)
+        return JsonResponse(data)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Creación un Cliente'
+        context['entity'] = 'Clientes'
+        context['list_url'] = self.success_url
+        context['action'] = 'add'
+        return context
+
+
+class ClienteUpdateView(LoginRequiredMixin, ValidacionPermiso, UpdateView):
+    model = Clientes
+    form_class = ClientesForm
+    template_name = 'clientes/create.html'
+    success_url = reverse_lazy('listar_cliente')
+    #permission_required = 'erp.change_client'
+    url_redirect = success_url
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        data = {}
+        try:
+            action = request.POST['action']
+            if action == 'edit':
+                form = self.get_form()
+                data = form.save()
+            else:
+                data['error'] = 'No ha ingresado a ninguna opción'
+        except Exception as e:
+            data['error'] = str(e)
+        return JsonResponse(data)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Edición un Cliente'
+        context['entity'] = 'Clientes'
+        context['list_url'] = self.success_url
+        context['action'] = 'edit'
+        return context
+
+
+class ClienteDeleteView(LoginRequiredMixin, ValidacionPermiso, DeleteView):
+    model = Clientes
+    template_name = 'clientes/delete.html'
+    success_url = reverse_lazy('listar_cliente')
+    #permission_required = 'erp.delete_client'
+    url_redirect = success_url
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        data = {}
+        try:
+            self.object.delete()
+        except Exception as e:
+            data['error'] = str(e)
+        return JsonResponse(data)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Eliminación de un Cliente'
+        context['entity'] = 'Clientes'
+        context['list_url'] = self.success_url
         return context

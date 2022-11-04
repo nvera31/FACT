@@ -5,7 +5,10 @@
 
 
 {% block content %}
-<h2 class="fs-5">BIENVENIDO A CODIGO HUMANO</h2>
+<h2 class="fs-5">BIENVENIDO A CODIGO HUMANO <Small>{{ request.user.get_full_name }}</Small></h2>
+<h6>
+    Sú último acceso fue {{ request.user.last_login }}
+</h6>
 <h5>Puedes Realizar tu compra Online!!!</h5>
 
   

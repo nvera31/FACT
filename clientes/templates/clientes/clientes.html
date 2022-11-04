@@ -45,7 +45,7 @@
     </table>
 
     <div class="card-footer">
-        <a class="btn btn-primary btnTest  btnAdd"><i class="bi bi-plus-circle"></i> Nuevo</a>
+        <a href="{{ create_url  }}" class="btn btn-primary btnTest  btnAdd"><i class="bi bi-plus-circle"></i> Nuevo</a>
     </div>
 </div>
    
@@ -57,46 +57,6 @@
 
 {% block javascript %}
 <!-- The Modal -->
-<div class="modal" id="myModalCliente">
-    <form method="post" action="." enctype="multipart/form-data">
-        <div class="modal-dialog">
-            <div class="modal-content">
-        
-              <!-- Modal Header -->
-              <div class="modal-header">
-                <h4 class="modal-title">
-                  <i></i> <span></span>
-                </h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-              </div>
-        
-              <!-- Modal body -->
-              <div class="modal-body">
-                <div class="container-fluid">
-                    <input  name="action" type="hidden" value="add">
-                    <input  name="id" id="id" type="hidden" value="0">
-                    {% for field  in form.visible_fields %}
-                    <div class="form-group">
-                        <label for="email">{{ field.label }}:</label>
-                        {{ field|add_class:'form-control'|attr:'autocomplete:off' }}
-                    </div>
-                
-                    {% endfor %}
-                </div>
-                
-              </div>
-        
-              <!-- Modal footer -->
-              <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Salir</button>
-                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Guardar</button>
-              </div>
-        
-            </div>
-        </div>
-    </form>
-    
-</div>
 
 {% endblock %}
  <!-- Contenido Cambiante -->

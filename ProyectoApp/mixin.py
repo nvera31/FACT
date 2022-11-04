@@ -1,7 +1,7 @@
 from datetime import datetime
 from django.shortcuts import redirect
 from django.http import HttpResponseRedirect
-from datetime import datetime
+
 from django.urls import reverse_lazy
 from django.contrib import messages
 

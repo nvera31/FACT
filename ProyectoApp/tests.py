@@ -49,3 +49,8 @@ for i in range(1, 6000):
         name = ''.join(random.choices(letters, k=5))
     Categoria(nombre=name).save()
     print('Guardado registro {}'.format(i))
+
+
+#BORRAR LA TABLA Y LA REINICIAR LA SECUENCIA
+# delete from categoria
+# alter sequence categoria_id_seq restart with 1

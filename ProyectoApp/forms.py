@@ -56,6 +56,12 @@ class ProductoForm(ModelForm):
                     'placeholder': 'Ingrese un nombre',
                 }
             ),
+            'categoria': Select(
+                attrs={
+                    'class': 'select2',
+                    'style': 'width: 100%'
+                }
+            ),
         }
 
 

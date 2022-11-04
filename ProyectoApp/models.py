@@ -84,6 +84,15 @@ class Producto(models.Model):
     def __str__(self):
         return self.nombre
 
+#CONTENIDO NUEVO
+    def toJSON(self):
+        item = model_to_dict(self)
+        item['categoria'] = self.categoria.toJSON()
+        item['imagen'] = self.get_image()
+        item['pvp'] = format(self.pvp, '.2f')
+        return item
+
+
     def get_image(self):
         if self.imagen:
             return '{}{}'.format(MEDIA_URL, self.imagen)
@@ -105,7 +114,7 @@ class Clientes(models.Model):
 
     def __str__(self):
         return self.nombre
-
+#RETORNA UN DICCIONARIO
     def toJSON(self):
         item = model_to_dict(self)
         item['sexo'] = {'id': self.sexo, 'nombre': self.get_sexo_display()}
