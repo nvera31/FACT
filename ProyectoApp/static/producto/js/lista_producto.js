@@ -43,8 +43,8 @@ $(function (){
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row){
-                    var buttons = '<a href="/cliente/actualizar/'+row.id+'/"  class="btn btn-info"><i class="bi bi-pencil-square"></i></a> ';
-                    buttons += '<a href="/cliente/eliminar/'+row.id+'/"  class="btn btn-danger"><i class="bi bi-trash-fill"></i></a>';
+                    var buttons = '<a href="/categoria/producto/update/'+row.id+'/"  class="btn btn-info"><i class="bi bi-pencil-square"></i></a> ';
+                    buttons += '<a href="/categoria/producto/delete/'+row.id+'/"  class="btn btn-danger"><i class="bi bi-trash-fill"></i></a>';
                     return buttons;
 
                 }

@@ -149,3 +149,52 @@ class ClientesForm(ModelForm):
         except Exception as e:
             data['error'] = str(e)
         return data
+
+
+#FORMULARIO Ventas
+class VentasForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        
+        # self.fields['cliente'].widget.attrs = {
+        #     'autofocus': True,
+        #     'class': 'form-control select2'
+        # }
+
+
+    class Meta:
+        model = Ventas
+        fields = '__all__'
+        widgets = {
+            'cliente': Select(
+                attrs={
+                    'class': 'form-control select2',
+                    'style': 'width: 100%'
+                }
+            ),
+            'f_registro': DateInput(format='%Y-%m-%d',
+                attrs={
+                    'value': datetime.now().strftime('%Y-%m-%d'),
+                    'autocomplete': 'off',
+                    'class': 'form-control datetimepicker-input',
+                    'id': 'f_registro',
+                    'data-target': '#f_registro',
+                    'data-toggle': 'datetimepicker'
+                }
+            ),
+            'iva': TextInput(attrs={
+                'class': 'form-control'
+            }),
+            'subtotal': TextInput(attrs={
+                'disabled': True,
+                'class': 'form-control'
+            }),
+            'total': TextInput(attrs={
+                'disabled': True,
+                'class': 'form-control'
+            })
+        }
+        #exclude = ['user_updated', 'user_creation']
+
+    

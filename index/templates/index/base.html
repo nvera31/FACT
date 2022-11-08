@@ -26,6 +26,10 @@
     <!--JQUERY UI-->
     <link href="{% static 'vendor/jquery-ui-1.12.1.custom/jquery-ui.min.css' %}" rel="stylesheet" >
     
+    <!--CALENDARIO-->
+    <link href="{% static 'vendor/tempusdominus-bootstrap-4/tempusdominus-bootstrap-4.min.css' %}" rel="stylesheet" >
+    <link href="{% static 'vendor/bootstrap-touchspin-4.3.0/jquery.bootstrap-touchspin.css' %}" rel="stylesheet" >
+
 </head>
 <body>
 <!--Barra Lateral-->
@@ -47,7 +51,7 @@
                 <span class="bg-dark rounded-pill text-white py-0 px-2">02</span>
             </a></li>
             <li class="">
-                <a href="#" class="text-decoration-none px-3 py-2 d-block"><i class="bi bi-basket-fill"></i>   Ventas</a></li>
+                <a href="{% url 'agregar_venta' %}" class="text-decoration-none px-3 py-2 d-block"><i class="bi bi-basket-fill"></i>   Ventas</a></li>
             <li class="">
                 <a href="{% url 'listar_cliente' %}" class="text-decoration-none px-3 py-2 d-block"><i class="bi bi-people"></i>   Clientes</a></li>
         </ul>
@@ -142,8 +146,14 @@
     <!--JQUERY UI-->
     <script src="{% static 'vendor/jquery-ui-1.12.1.custom/jquery-ui.min.js' %}"></script>
 
-
+    <!--SWEET ALERT-->
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!--CALENDARIO-->
+    <script src="{% static 'vendor/moment-2.25.3/moment-with-locales.js' %}"></script>
+    <script src="{% static 'vendor/tempusdominus-bootstrap-4/tempusdominus-bootstrap-4.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap-touchspin-4.3.0/jquery.bootstrap-touchspin.js' %}" rel="stylesheet" ></script>
+
 
     <script>
         $(".sidebar ul li").on('click', function(){

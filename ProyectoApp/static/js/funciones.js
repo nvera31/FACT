@@ -65,3 +65,5 @@ function submit_with_ajax(url,title,content,parametros,callback){
         }
     })
 }
+
+
