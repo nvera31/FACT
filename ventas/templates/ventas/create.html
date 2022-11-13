@@ -22,7 +22,7 @@
 
             <hr>
             {% csrf_token %}
-
+    <form action="" method="post">
             <div class="card-body">
                 <div class="row">
                     <div class="col-lg-8">
@@ -34,10 +34,9 @@
                                 <div class="form-group">
                                     <label>Buscador de Productos:</label>
                                     <div class="input-group">
-                                        <input type="text" name="search" class="form-control" placeholder="Ingrese Descripcion" autocomplete="off">
-                                        <span class="input-group-append">
-                                            <button type="button" class="btn btn-danger btn-flat">X</button>
-                                        </span>
+                                        <select class="form-control select2" style="width: 100%" name="search">
+
+                                        </select>
                                     </div>
                                     <hr>
                                     <button type="button" class="btn btn-warning btn-sm btnRemove">
@@ -58,25 +57,7 @@
                                       </tr>
                                     </thead>
                                     <tbody>
-                                       <!-- {% for cli in object_list %}
-                                       <tr>
-                                          <td>{{ cli.id }}</td>
-                                          <td>{{ cli.nombre }}</td>
-                                          <td>{{ cli.apellido }}</td>
-                                          <td>{{ cli.dni }}</td>
-                                          <td>{{ cli.f_nacimiento }}</td>
-                                          <td>{{ cli.direccion }}</td>
-                                          <td>{{ cli.sexo }}</td>
-                                          <td class="text-center">
-                                              <a href="#" class="btn btn-warning btn-xs btn-flat">
-                                                  <i class="bi bi-pencil-square"></i>
-                                              </a>
-                                              <a href="#" class="btn btn-danger btn-xs btn-flat">
-                                                  <i class="bi bi-trash-fill"></i>
-                                              </a>
-                                          </td>
-                                      </tr>
-                                      {% endfor %}  -->
+                                      
                                     </tbody>
                                   </table>
                             </div>
@@ -90,6 +71,7 @@
                                 <h3 class="card-title">Factura <i class="bi bi-basket3"></i></h3>
                             </div>
                             <div class="card-body card bg-white text-black">
+                                <input type="hidden" name="action" value="{{ action }}">
                                 <div class="form-group">
                                     <label>Fecha de Venta:</label>
                                     {{ form.f_registro }}
@@ -108,7 +90,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label>IVA Calculado:</label>
-                                    <input type="text" class="form-control" readonly name="ivacal" value="0.0">
+                                    <input type="text" class="form-control" readonly name="ivacal"  value="0.00" autocomplete="off">
                                 </div>
                                 <div class="form-group">
                                     <label>Total a pagar:</label>
@@ -122,40 +104,7 @@
                     </div>
                 </div>
             </div>
-
-            {% comment %} <input type="hidden" name="action" value="{{ action }}"> {% endcomment %}
-
-            <!--MANEJO DE ERRORES-->
-            {% comment %} {% if form.errors %}
-            <div class="alert alert-danger">
-                <strong>Alerta!</strong> 
-                <ul>
-                    {% for field  in form %}
-                        {% for error in field.errors %}
-
-                            <li>{{ error }}</li>
-
-
-                        {% endfor %}
-                    {% endfor %}
-
-                    {% for error in form.non_field_errors %}
-
-                        <li>{{ error }}</li>
-
-                    {% endfor %}
-                </ul>
-              </div>
-            {% endif %}
-              <!--Insertar todos los campos de la tabla en el formulario-->
-              {% for field  in form.visible_fields %}
-            <div class="form-group">
-                <label for="email">{{ field.label }}:</label>
-                {{ field|add_class:'form-control'|attr:'autocomplete:off' }}
-            </div>
-                
-            {% endfor %} {% endcomment %}
-            
+                        
             <hr>
             <div class="card-footer">
                 <button type="submit" class="btn btn-primary btnTest"><i class="bi bi-plus-circle"></i> Guardar</button>
@@ -163,7 +112,7 @@
             </div>
         </div>
         
-    
+    </form>
 
 
 
@@ -171,20 +120,7 @@
 
 {% block lolo %}
 
-<script>
-   //PRESIONA BOTON ENVIAR Y SE GUARDA NUEVA CATEGORIA
-    $('form').on('submit', function (e){
-        e.preventDefault();
-        var parametros = new FormData(this);
 
-        submit_with_ajax(window.location.pathname,'Notificacion', 'Seguro de Realizar la siguiente accion?', parametros, function(){
-            location.href = '{{ list_url }}';
-        });
-        
-
-        
-    });   
-</script>
                     
 <script type="application/javascript">
     $(function () {
@@ -193,12 +129,17 @@
         });
 
 //CALENDARIO
-        $('#f_registro').datetimepicker({
+var fecha_r = $('input[name="f_registro"]');
+
+        fecha_r.datetimepicker({
             format: 'YYYY-MM-DD',
-            date: moment().format("YYYY-MM-DD"),
-            locale: 'es'
+            //date: moment().format("YYYY-MM-DD"),
+            locale: 'es',
+            keepOpen: false,
             //maxDate: moment().format("YYYY-MM-DD")
         });
+        //inserta fecha anterior
+        fecha_r.datetimepicker('date', fecha_r.val());
 
         $("input[name='iva']").TouchSpin({
             min: 0,
@@ -210,15 +151,22 @@
             postfix: '%'
         }).on('change', function(){
             ventas.calcular_factura();
-        }).val(0.12);
+        })
+            .val(0.12); 
     });
-
     
-
 </script>
+
+
 
 {% endblock %}
 
 {% block head_list %}
  <script src="{% static 'ventas/js/ventas.js' %}"></script>
+
+ <script>
+    ventas.items.productos = {{ det|safe }}
+    //ventas.list();
+</script>
+ 
 {% endblock %}

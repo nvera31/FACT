@@ -1,0 +1,82 @@
+{% extends "index/base.html" %}
+
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+
+<div class="container mt-3">
+    <h2>{{ title }}</h2>
+              
+    <table class="table table-primary" id="lista_ventas" >
+      <thead>
+        <tr>
+            <th scope="col">Nro</th>
+            <th scope="col">Cliente</th>
+            <th scope="col">Fecha de registro</th>
+            <th scope="col">Subtotal</th>
+            <th scope="col">Iva</th>
+            <th scope="col">Total</th>
+            <th scope="col">Opciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+      </tbody>
+    </table>
+
+    <div class="card-footer">
+        <a href="{{ create_url }}" class="btn btn-primary btnTest  btnAdd"><i class="bi bi-plus-circle"></i> Nuevo</a>
+    </div>
+</div>
+   
+ 
+  
+{% endblock %}
+
+
+
+{% block javascript %}
+<!-- The Modal -->
+<div class="modal" id="detalleModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Consulta</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <table class="table table-primary" id="detalle_ventas" >
+          <thead>
+            <tr>
+              <th scope="col">Producto</th>
+              <th scope="col">Categoria</th>
+              <th scope="col">PVP</th>
+              <th scope="col">Cantidad</th>
+              <th scope="col">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Salir</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+ <!-- Contenido Cambiante -->
+ {% block head_list %}
+ <script src="{% static 'ventas/js/listado.js' %}"></script>
+{% endblock %}

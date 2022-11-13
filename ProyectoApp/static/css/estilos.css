@@ -50,6 +50,19 @@ background: linear-gradient(90deg, rgba(240,227,229,1) 0%, rgba(255,170,185,1) 4
     }
 }
 
+td.details-control{
+    background: url('../vendor/datatables-1.10.20/images/details_open.png') no-repeat center center;
+    background-color: rgba(206, 206, 206, 0.637);
+    cursor: pointer;
+}
+
+tr.shown td.details-control{
+    background: url('../vendor/datatables-1.10.20//images/details_close.png') no-repeat center center;
+}
+
+
+
+
 /* Iniciar sesion */
 /* .gradient-custom {
     /* fallback for old browsers */

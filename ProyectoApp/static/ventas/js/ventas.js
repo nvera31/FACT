@@ -10,16 +10,16 @@ var ventas ={
         productos : []
     },
     calcular_factura: function(){
-        var subtotal = 0.00;
-        var iva = $('input[name="iva"]').val();
+        var fsubtotal = 0.00;
+        var fiva = $('input[name="iva"]').val();
         $.each(this.items.productos, function(pos, dict){
             dict.subtotal = dict.cantidad * parseFloat(dict.pvp);
-            subtotal+=dict.subtotal;
+            fsubtotal+=dict.subtotal;
         });
-        this.items.subtotal = subtotal;
-        this.items.iva = this.items.subtotal * iva;
+        this.items.subtotal = fsubtotal;
+        this.items.iva = this.items.subtotal * fiva;
         this.items.total = this.items.subtotal + this.items.iva;
-
+        
         $('input[name="subtotal"]').val(this.items.subtotal.toFixed(2));
         $('input[name="ivacal"]').val(this.items.iva.toFixed(2));
         $('input[name="total"]').val(this.items.total.toFixed(2));
@@ -101,6 +101,34 @@ var ventas ={
 
 };
 
+//BUSQUEDA CON IMAGEN
+function formatRepo(repo) {
+    if (repo.loading) {
+        return repo.text;
+    }
+
+    var option = $(
+        '<div class="wrapper container">'+
+        '<div class="row">' +
+        '<div class="col-lg-1">' +
+        '<img src="' + repo.imagen + '" class="img-fluid img-thumbnail d-block mx-auto rounded">' +
+        '</div>' +
+        '<div class="col-lg-11 text-left shadow-sm">' +
+        //'<br>' +
+        '<p style="margin-bottom: 0;">' +
+        '<b>Nombre:</b> ' + repo.nombre + '<br>' +
+        '<b>Categoría:</b> ' + repo.categoria.nombre + '<br>' +
+        '<b>PVP:</b> <span class="badge text-bg-warning">$'+repo.pvp+'</span>'+
+        '</p>' +
+        '</div>' +
+        '</div>' +
+        '</div>');
+
+    return option;
+}
+
+
+
 //DATABLE PRODUCTOS
 // $(function (){
 //     tblCliente = $('#tblProductos').DataTable({
@@ -110,7 +138,7 @@ var ventas ={
 // });
 
 //ALERTA VACIAR
-function alert_action(title,content,callback){
+function alert_action(title,content,callback, cancel){
     $.confirm({
         theme: 'bootstrap',
         title: title,
@@ -133,7 +161,7 @@ function alert_action(title,content,callback){
                 text: "No",
                 btnClass: 'btn-red',
                 action: function () {
-                    
+                    cancel();
                 }
             },
         }
@@ -143,40 +171,42 @@ function alert_action(title,content,callback){
 
 //BUSCAR PRODUCTOS
 $(function (){
-    $( 'input[name="search"]' ).autocomplete({
-        source: function(request, response){
-            $.ajax({
-                //TRABAJA CON LA VISTA ACTUAL
-                url: window.location.pathname,
-                type: 'POST',
-                data: {
-                    'action': 'search_productos',
-                    'term': request.term
-                },
-                dataType: 'json',
-            }).done(function (data) {
-                response(data);
+    // $( 'input[name="search"]' ).autocomplete({
+    //     source: function(request, response){
+    //         $.ajax({
+    //             //TRABAJA CON LA VISTA ACTUAL
+    //             url: window.location.pathname,
+    //             type: 'POST',
+    //             data: {
+    //                 'action': 'search_productos',
+    //                 'term': request.term
+    //             },
+    //             dataType: 'json',
+    //         }).done(function (data) {
+    //             response(data);
 
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                //alert(textStatus+':'+errorThrown);
-            }).always(function (data) {
+    //         }).fail(function (jqXHR, textStatus, errorThrown) {
+    //             //alert(textStatus+':'+errorThrown);
+    //         }).always(function (data) {
 
-            });
-        },
-        delay: 500,
-        minLength: 1,
-        select: function( event, ui){
-            event.preventDefault();
-            console.clear();
-            ui.item.cantidad = 1;
-            ui.item.subtotal = 0.00;            
-            console.log(ventas.items);
+    //         });
+    //     },
+    //     delay: 500,
+    //     minLength: 1,
+    //     select: function( event, ui){
+    //         event.preventDefault();
+    //         console.clear();
+    //         ui.item.cantidad = 1;
+    //         ui.item.subtotal = 0.00;            
+    //         console.log(ventas.items);
 
-            ventas.add(ui.item);
+    //         ventas.add(ui.item);
 
-            $(this).val('');
-        }
-        });
+    //         $(this).val('');
+    //     }
+    //     });
+    
+    
 
 //VACIA LA TABLA
         $('.btnRemove').on('click', function(){
@@ -184,6 +214,8 @@ $(function (){
             alert_action('Notificacion', 'Seguro de Vaciar la lista?', function(){
                 ventas.items.productos = []
                 ventas.list();
+            }, function(){
+
             });
             
         });
@@ -195,18 +227,92 @@ $(function (){
             alert_action('Notificacion', 'Seguro de Eliminar el producto de la lista?', function(){
                 ventas.items.productos.splice(tr.row, 1)
                 ventas.list();
+            }, function(){
+
             });
         })
         .on('change', 'input[name="cant"]', function(){
-        console.clear();
-        var cant = parseInt($(this).val());
-        var tr = tProductos.cell($(this).closest('td, li')).index();
-        ventas.items.productos[tr.row].cantidad = cant;
-        ventas.calcular_factura();
-        $('td:eq(5)',tProductos.row(tr.row).node()).html('$'+ventas.items.productos[tr.row].subtotal.toFixed(2));
+            console.clear();
+            var cant = parseInt($(this).val());
+            var tr = tProductos.cell($(this).closest('td, li')).index();
+            ventas.items.productos[tr.row].cantidad = cant;
+            ventas.calcular_factura();
+            $('td:eq(5)',tProductos.row(tr.row).node()).html('$'+ventas.items.productos[tr.row].subtotal.toFixed(2));
         
    
     });
+
+    $('.btnLimpiar').on('click', function(){
+        $('input[name="search"]').val('').focus();
+    });
+
+
+//EVENTO SUBMIT AGREGAR VENTAS
+    $('form').on('submit', function (e){
+        e.preventDefault();
+
+        if(ventas.items.productos.length === 0){
+            errores('Debe tener items en Detalle');
+            return false;
+        }
+
+        ventas.items.f_registro = $('input[name="f_registro"]').val();
+        ventas.items.cliente = $('select[name="cliente"]').val();
+
+        var parametros = new FormData();
+        parametros.append('action', $('input[name="action"]').val());
+        parametros.append('ventas', JSON.stringify(ventas.items));
+
+        submit_with_ajax(window.location.pathname,'Notificacion', 'Seguro de Realizar la siguiente accion?', parametros, function (response) {
+            
+            alert_action('Notificacion', 'Desea imprimir factura?', function(){
+                window.open('/ventas/factura/pdf/'+ response.id + '/', '_blank');
+                location.href = '/ventas/listar/';
+            }, function(){
+                location.href = '/ventas/listar/';
+            });
+            
+            
+        });  
+    
+    });   
+
+    
+    
+    $('select[name="search"]').select2({
+        language: 'es',
+        allowClear: true,
+        ajax:{
+            delay: 250,
+            type: 'POST',
+            url: window.location.pathname,
+            data: function (params){
+                var query = {
+                    term: params.term,
+                    action: 'search_productos'
+                }
+                return query;
+            },
+            processResults: function (data){
+                return {
+                    results: data
+                }
+            },
+
+        },
+        placeholder: 'Ingrese Descripcion',
+        minimumInputLength: 1,
+        templateResult: formatRepo,
+    }).on('select2:select', function(e){
+        var data = e.params.data;
+        data.cantidad = 1;
+        data.subtotal = 0.00;            
+        ventas.add(data);
+        $(this).val('').trigger('change.select2');
+    
+    });
+    
+     ventas.list();
 
 });
 

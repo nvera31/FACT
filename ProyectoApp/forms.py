@@ -184,7 +184,7 @@ class VentasForm(ModelForm):
                 }
             ),
             'iva': TextInput(attrs={
-                'class': 'form-control'
+                'class': 'form-control',
             }),
             'subtotal': TextInput(attrs={
                 'disabled': True,

@@ -43,7 +43,7 @@ function submit_with_ajax(url,title,content,parametros,callback){
                      }).done(function (data) {
                         console.log(data);
                          if(!data.hasOwnProperty('error')){
-                            callback();
+                            callback(data);
                             return false;
                          }
                          errores(data.error);

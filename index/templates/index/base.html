@@ -30,6 +30,11 @@
     <link href="{% static 'vendor/tempusdominus-bootstrap-4/tempusdominus-bootstrap-4.min.css' %}" rel="stylesheet" >
     <link href="{% static 'vendor/bootstrap-touchspin-4.3.0/jquery.bootstrap-touchspin.css' %}" rel="stylesheet" >
 
+    <!--DATE RANGE-->
+    <link href="{% static 'vendor/daterangepicker-3.1/daterangepicker.css' %}" rel="stylesheet" >
+
+    <!--BOTONES EXCEL-->
+    <link rel="stylesheet" href="{% static 'lib/datatables-1.10.20/plugins/buttons-1.6.1/css/buttons.bootstrap.min.css' %}"/>
 </head>
 <body>
 <!--Barra Lateral-->
@@ -51,9 +56,11 @@
                 <span class="bg-dark rounded-pill text-white py-0 px-2">02</span>
             </a></li>
             <li class="">
-                <a href="{% url 'agregar_venta' %}" class="text-decoration-none px-3 py-2 d-block"><i class="bi bi-basket-fill"></i>   Ventas</a></li>
+                <a href="{% url 'listar_venta' %}" class="text-decoration-none px-3 py-2 d-block"><i class="bi bi-basket-fill"></i>   Ventas</a></li>
             <li class="">
                 <a href="{% url 'listar_cliente' %}" class="text-decoration-none px-3 py-2 d-block"><i class="bi bi-people"></i>   Clientes</a></li>
+            <li class="">
+                <a href="{% url 'reportes' %}" class="text-decoration-none px-3 py-2 d-block"><i class="bi bi-clipboard-data-fill"></i>   Reportes de Ventas</a></li>
         </ul>
         <hr class="h-color mx-2">
 
@@ -154,6 +161,23 @@
     <script src="{% static 'vendor/tempusdominus-bootstrap-4/tempusdominus-bootstrap-4.min.js' %}"></script>
     <script src="{% static 'vendor/bootstrap-touchspin-4.3.0/jquery.bootstrap-touchspin.js' %}" rel="stylesheet" ></script>
 
+    <!--DATE RANGER-->
+    <script src="{% static 'vendor/daterangepicker-3.1/spanish.js' %}" rel="stylesheet" ></script>
+    <script src="{% static 'vendor/daterangepicker-3.1/daterangepicker.js' %}" rel="stylesheet" ></script>
+
+
+    <!-- BOTON EXCEL-->
+    <script src="{% static 'vendor/datatables-1.10.20/plugins/buttons-1.6.1/js/dataTables.buttons.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'vendor/datatables-1.10.20/plugins/jszip-2.5.0/jszip.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'vendor/datatables-1.10.20/plugins/pdfmake-0.1.36/pdfmake.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'vendor/datatables-1.10.20/plugins/pdfmake-0.1.36/vfs_fonts.js' %}" type="text/javascript"></script>
+    <script src="{% static 'vendor/datatables-1.10.20/plugins/buttons-1.6.1/js/buttons.html5.min.js' %}" type="text/javascript"></script>
+    
+    <!--HIGHCHART-->
+    <script src="{% static 'vendor/highcharts-8.1.2/highcharts.js' %}" type="text/javascript"></script>
+    <script src="{% static 'vendor/highcharts-8.1.2/modules/exporting.js' %}" type="text/javascript"></script>
+    <script src="{% static 'vendor/highcharts-8.1.2/modules/export-data.js' %}" type="text/javascript"></script>
+    <script src="{% static 'vendor/highcharts-8.1.2/modules/accessibility.js' %}" type="text/javascript"></script>
 
     <script>
         $(".sidebar ul li").on('click', function(){

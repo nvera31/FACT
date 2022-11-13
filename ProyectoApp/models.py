@@ -138,6 +138,16 @@ class Ventas(models.Model):
     def __str__(self):
         return self.cliente.nombre
 
+    def toJSON(self):
+        item = model_to_dict(self)
+        item['cliente'] = self.cliente.toJSON()
+        item['subtotal'] = format(self.subtotal, '.2f')
+        item['iva'] = format(self.iva, '.2f')
+        item['total'] = format(self.total, '.2f')
+        item['f_registro'] = self.f_registro.strftime('%Y-%m-%d')
+        item['det'] = [i.toJSON() for i  in self.det_ventas_set.all()]
+        return item
+
     class Meta:
         verbose_name = 'Venta'
         verbose_name_plural = 'Ventas'
@@ -154,6 +164,14 @@ class Det_Ventas(models.Model):
 
     def __str__(self):
         return self.prod.nombre
+
+
+    def toJSON(self):
+        item = model_to_dict(self, exclude=['venta'])
+        item['prod'] = self.prod.toJSON()
+        item['precio'] = format(self.precio, '.2f')
+        item['subtotal'] = format(self.subtotal, '.2f')
+        return item
 
     class Meta:
         verbose_name = 'DVenta'
