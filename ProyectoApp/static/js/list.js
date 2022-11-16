@@ -13,7 +13,7 @@ $(function (){
             dataSrc: ""
         },
         columns: [
-            {"data": "id"},
+            {"data": "posicion"},
             {"data": "nombre"},
             {"data": "desc"},
             {"data": "opc"},

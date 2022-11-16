@@ -8,15 +8,20 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from random import randint
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 # Create your views here.
 
-class InicioView(TemplateView):
+class InicioView(LoginRequiredMixin, TemplateView):
     template_name = 'index/home.html'
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        request.user.get_group_session()
+        return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         data = {}

@@ -19,7 +19,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 
 #ENLISTA LA TABLA CATEGORIA
 class CategoriaListView(LoginRequiredMixin, ValidacionPermiso,ListView):
-    permission_required = 'ProyectoApp.change_categoria'
+    #permission_required = 'ProyectoApp.change_categoria'
     model = Categoria
     template_name = 'ProyectoApp/listar.html'
 
@@ -35,8 +35,12 @@ class CategoriaListView(LoginRequiredMixin, ValidacionPermiso,ListView):
             action = request.POST['action']
             if action == 'searchdata':
                 data = []
+                posicion = 1
                 for i in Categoria.objects.all():
-                    data.append(i.toJSON())
+                    item = i.toJSON()
+                    item['posicion'] = posicion
+                    data.append(item)
+                    posicion += 1
             else:
                 data['error'] = 'Ha ocurrido un error'
             

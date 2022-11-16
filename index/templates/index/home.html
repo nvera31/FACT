@@ -118,7 +118,7 @@
         
     });
     
-    Highcharts.chart('container-online', {
+    {% comment %} Highcharts.chart('container-online', {
         chart: {
             type: 'spline',
             animation: Highcharts.svg, // don't animate in old IE
@@ -220,7 +220,7 @@
                 return data;
             }())
         }]
-    });
+    }); {% endcomment %}
 
 
     function grafico_ventas(){

@@ -5,19 +5,20 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-
-
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from ProyectoApp.mixin import IsSuperUserMixin, ValidacionPermiso
 from ProyectoApp.models import Producto
 from ProyectoApp.forms import ProductoForm
 
 # Create your views here.
 
-class ProductoListView(ListView):
+class ProductoListView(LoginRequiredMixin,ValidacionPermiso,ListView):
     model = Producto
     template_name = 'producto/productos.html'
+    permission_required = 'view_producto', 'change_producto', 'add_producto', 'delete_producto'
 
     @method_decorator(csrf_exempt)
-    @method_decorator(login_required)
+    #@method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
@@ -47,11 +48,13 @@ class ProductoListView(ListView):
         return context
 
 
-class ProductoCreateView(CreateView):
+class ProductoCreateView(LoginRequiredMixin,ValidacionPermiso,CreateView):
     model = Producto
     form_class = ProductoForm
     template_name = 'producto/create.html'
     success_url = reverse_lazy('product_list')
+    permission_required = 'add_producto'
+    url_redirect =success_url
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -85,11 +88,13 @@ class ProductoCreateView(CreateView):
         return context
 
 
-class ProductoUpdateView(UpdateView):
+class ProductoUpdateView(LoginRequiredMixin,ValidacionPermiso,UpdateView):
     model = Producto
     form_class = ProductoForm
     template_name = 'producto/create.html'
     success_url = reverse_lazy('product_list')
+    permission_required = 'change_producto'
+    url_redirect =success_url
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs) :
@@ -124,10 +129,12 @@ class ProductoUpdateView(UpdateView):
         return context
 
 
-class ProductoDeleteView(DeleteView):
+class ProductoDeleteView(LoginRequiredMixin,ValidacionPermiso,DeleteView):
     model = Producto
     template_name = 'producto/delete.html'
     success_url = reverse_lazy('product_list')
+    permission_required = 'delete_producto'
+    url_redirect =success_url
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):

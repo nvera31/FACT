@@ -52,13 +52,15 @@
 
 {% block lolo %}
 <script>
-
+    
+    
    //PRESIONA BOTON ENVIAR Y SE ELIMINA LA CATEGORIA
    $('form').on('submit', function (e){
         e.preventDefault();
         var parametros = new FormData(this);
 
         submit_with_ajax(window.location.pathname,'Notificacion', 'Seguro de Eliminar?',parametros, function(){
+            
             Swal.fire({
                 title: 'Alerta',
                 text: 'Registro Eliminado correctamente',
@@ -68,6 +70,7 @@
             }).then((result) =>{
                 location.href = '{{ list_url }}';
             });
+            
         });
         
 
