@@ -113,12 +113,16 @@ class Clientes(models.Model):
     sexo = models.CharField(max_length=10, choices=gender_choices, default='male', verbose_name='Sexo')
 
     def __str__(self):
-        return self.nombre
+        return self.get_full_name()
+
+    def get_full_name(self):
+        return '{} {} / {}'.format(self.nombre, self.apellido, self.dni)
 #RETORNA UN DICCIONARIO
     def toJSON(self):
         item = model_to_dict(self)
         item['sexo'] = {'id': self.sexo, 'nombre': self.get_sexo_display()}
         item['f_nacimiento'] = self.f_nacimiento.strftime('%Y-%m-%d')
+        item['full_name'] = self.get_full_name()
         return item
 
     class Meta:

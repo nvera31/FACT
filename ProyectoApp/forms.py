@@ -143,7 +143,8 @@ class ClientesForm(ModelForm):
         form = super()
         try:
             if form.is_valid():
-                form.save()
+                instance = form.save()
+                data = instance.toJSON()
             else:
                 data['error'] = form.errors
         except Exception as e:
@@ -155,7 +156,7 @@ class ClientesForm(ModelForm):
 class VentasForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
+        self.fields['cliente'].queryset = Clientes.objects.none()
         
         # self.fields['cliente'].widget.attrs = {
         #     'autofocus': True,
@@ -169,8 +170,8 @@ class VentasForm(ModelForm):
         widgets = {
             'cliente': Select(
                 attrs={
-                    'class': 'form-control select2',
-                    'style': 'width: 100%'
+                    'class': 'form-select select2',
+                    # 'style': 'width: 100%'
                 }
             ),
             'f_registro': DateInput(format='%Y-%m-%d',

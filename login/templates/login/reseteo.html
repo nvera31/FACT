@@ -8,6 +8,12 @@
     />
 
     <link href="{% static 'css/estilos.css' %}" rel="stylesheet" />
+    
+    <!--JQUERYCONFIRM-->
+    <link
+      href="{% static 'vendor/jquery-confirm-v3.3.4/jquery-confirm.min.css' %}"
+      rel="stylesheet"
+    />
 
     <link
       rel="stylesheet"
@@ -24,63 +30,30 @@
             <div class="card bg-dark text-white" style="border-radius: 1rem">
               <div class="card-body p-5 text-center">
                 <div class="mb-md-5 mt-md-4 pb-2">
-                  <h2 class="fw-bold mb-2 text-uppercase">Iniciar Sesion</h2>
+                  <h2 class="fw-bold mb-2 text-uppercase">Reseteo de Contraseña</h2>
 
                     <!--Formulario-->
                   <form action="." method="post">
                     <input type="hidden" name="next" value="{{ next }}">
                     {% csrf_token %}
                     <div class="form-outline form-white mb-4">
-                      {{ form.username|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese su usuario' }}
+                      {{ form.username }}
                     </div>
-
-                    <div class="form-outline form-white mb-4">
-                      {{ form.password|add_class:'form-control'|attr:'autocomplete:off'|attr:'placeholder:Ingrese su clave' }}
-                    </div>
-
-                    <p class="small mb-5 pb-lg-2">
-                      <a class="text-white-50" href="{% url 'reseteo' %}"
-                        >¿Olvidó su contraseña?</a
-                      >
-                    </p>
 
                     <button
                       class="btn btn-outline-light btn-lg px-5"
                       type="submit">
-                      <i class="bi bi-box-arrow-in-right"></i> INICIAR SESION
+                      <i class="bi bi-envelope"></i> Resetear Contraseña
                     </button>
                   </form>
                 </div>
 
-                <!--MANEJO DE ERRORES-->
-            {% if form.errors %}
-            <div class="alert alert-danger">
-                <strong>Alerta!</strong> 
-                <ul>
-                    {% for field  in form %}
-                        {% for error in field.errors %}
-
-                            <li>{{ error }}</li>
-
-
-                        {% endfor %}
-                    {% endfor %}
-
-                    {% for error in form.non_field_errors %}
-
-                        <li>{{ error }}</li>
-
-                    {% endfor %}
-                </ul>
-              </div>
-            {% endif %}
-             
-
                 
                 <div>
                   <p class="mb-0">
-                    No tienes una cuenta?
-                    <a href="#!" class="text-white-50 fw-bold">Registrarse</a>
+                    <a class="text-white-50" href="{% url 'login' %}"
+                      >Dar clic aqui si deseas volver al login!</a
+                    >
                   </p>
                 </div>
               </div>
@@ -90,8 +63,42 @@
       </div>
     </section>
 
+    
     <!-- JS Bootstrap -->
     <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+
+    <script>
+        $( function (){
+            $('form').on('submit', function (e){
+                e.preventDefault();
+                var parametros = new FormData(this);
+        
+                submit_with_ajax(window.location.pathname,'Notificacion', 'Seguro de Realizar la siguiente accion?', parametros, function(){
+                    Swal.fire({
+                        title: 'Notificacion',
+                        text: 'Se ha enviado un correo con los pasos',
+                        icon: 'success',
+                        timer: 5000
+                        
+                    }).then((result) =>{
+                        location.href = '/index/'
+                });
+                
+        
+                
+            });
+        
+        });
+    });
+    </script>
+
+
+    <script src="{% static 'js/funciones.js' %}"></script>
+    <!--JQUERYCONFIRM-->
+    <script src="{% static 'vendor/jquery-confirm-v3.3.4/jquery-confirm.min.js' %}"></script>
+
+
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </body>
 </html>

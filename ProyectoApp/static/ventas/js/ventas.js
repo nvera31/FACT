@@ -1,5 +1,6 @@
 var tblCliente;
 var tProductos;
+var tblBuscarPro;
 var ventas ={
     items : {
         cliente: '',
@@ -171,42 +172,92 @@ function alert_action(title,content,callback, cancel){
 
 //BUSCAR PRODUCTOS
 $(function (){
-    // $( 'input[name="search"]' ).autocomplete({
-    //     source: function(request, response){
-    //         $.ajax({
-    //             //TRABAJA CON LA VISTA ACTUAL
-    //             url: window.location.pathname,
-    //             type: 'POST',
-    //             data: {
-    //                 'action': 'search_productos',
-    //                 'term': request.term
-    //             },
-    //             dataType: 'json',
-    //         }).done(function (data) {
-    //             response(data);
+    $( 'input[name="search"]' ).autocomplete({
+        source: function(request, response){
+            $.ajax({
+                //TRABAJA CON LA VISTA ACTUAL
+                url: window.location.pathname,
+                type: 'POST',
+                data: {
+                    'action': 'search_productos',
+                    'term': request.term
+                },
+                dataType: 'json',
+            }).done(function (data) {
+                response(data);
 
-    //         }).fail(function (jqXHR, textStatus, errorThrown) {
-    //             //alert(textStatus+':'+errorThrown);
-    //         }).always(function (data) {
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                //alert(textStatus+':'+errorThrown);
+            }).always(function (data) {
 
-    //         });
-    //     },
-    //     delay: 500,
-    //     minLength: 1,
-    //     select: function( event, ui){
-    //         event.preventDefault();
-    //         console.clear();
-    //         ui.item.cantidad = 1;
-    //         ui.item.subtotal = 0.00;            
-    //         console.log(ventas.items);
+            });
+        },
+        delay: 500,
+        minLength: 1,
+        select: function( event, ui){
+            event.preventDefault();
+            console.clear();
+            ui.item.cantidad = 1;
+            ui.item.subtotal = 0.00;            
+            console.log(ventas.items);
 
-    //         ventas.add(ui.item);
+            ventas.add(ui.item);
 
-    //         $(this).val('');
-    //     }
-    //     });
+            $(this).val('');
+        }
+        });
     
+//BUSQUEDA CLIENTES
+    $('select[name="cliente"]').select2({
+        allowClear: true,
+        ajax:{
+            delay: 250,
+            type: 'POST',
+            url: window.location.pathname,
+            data: function (params){
+                var query = {
+                    term: params.term,
+                    action: 'search_clientes'
+                }
+                return query;
+            },
+            processResults: function (data){
+                return {
+                    results: data
+                }
+            },
+
+        },
+        placeholder: 'busqueda',
+        minimumInputLength: 1,
+    })
+
+//AGREGAR CLIENTE
+    $('.btnAddCliente').on('click', function (){
+        $('#ModalCliente').modal('show');
+    });
+
+    //LIMPIAR MODAL
+    $('#ModalCliente').on('hidden.bs.modal', function(e){
+        $('#frmCliente').trigger('reset');
+    });
     
+
+    $('#frmCliente').on('submit', function (e){
+        e.preventDefault();
+        var parametros = new FormData(this);
+        parametros.append('action', 'create_cliente');
+
+        submit_with_ajax(window.location.pathname,'Notificacion', 'Seguro de crear cliente?', parametros, function (response) {
+            //console.log(response)
+            var newOption = new Option(response.full_name, response.id, false, true);
+            $('select[name="cliente"]').append(newOption).trigger('change');
+            $('#ModalCliente').modal('hide');
+            
+        });  
+    
+    });   
+
 
 //VACIA LA TABLA
         $('.btnRemove').on('click', function(){
@@ -246,9 +297,80 @@ $(function (){
         $('input[name="search"]').val('').focus();
     });
 
+    //MODAL DE BUSQUEDA DE PRODUCTOS
+    $('.btnBuscarPro').on('click', function(){
+        tblBuscarPro = $('#tblBuscarProd').DataTable({
+            responsive: true,
+            autoWidth: false,
+            destroy: true,
+            deferRender: true,
+            ajax: {
+                url: window.location.pathname,
+                type: 'POST',
+                data: {
+                    'action': 'search_productos',
+                    'term': $('input[name="search"]').val()
+                },
+                dataSrc: ""
+            },
+            columns: [
+                {"data": "nombre"},
+                {"data": "categoria.nombre"},
+                {"data": "imagen"},
+                {"data": "pvp"},
+                {"data": "id"},
+            ], columnDefs: [
+                {
+                    targets: [-3],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<img src="'+data+'" class="img-fluid d-block mx-auto" style="width: 20px; height: 20px;">';
+                    }
+                },
+                {
+                    targets: [-2],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '$'+parseFloat(data).toFixed(2);
+                    }
+                },            
+                {
+                    targets: [-1],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row){ 
+                        return '<a rel="add" class="btn btn-success"><i class="bi bi-plus-circle-fill"></i></a> ';
+    
+                    }
+                },
+                
+            ],
+            initComplete: function(settings, json){
+                
+            }
+        });
+        $('#ModalProducto').modal('show');
+
+    });
+
+
+    //AGREGAR DEL MODAL PRODUCTO A LA LISTA
+    $('#tblBuscarProd tbody')
+        .on('click', 'a[rel="add"]', function(){
+            console.clear();
+            var tr = tblBuscarPro.cell($(this).closest('td, li')).index();
+            var producto = tblBuscarPro.row(tr.row).data();
+            producto.cantidad = 1;
+            producto.subtotal = 0.00; 
+            ventas.add(producto);
+            
+   
+    });
 
 //EVENTO SUBMIT AGREGAR VENTAS
-    $('form').on('submit', function (e){
+    $('frmVenta').on('submit', function (e){
         e.preventDefault();
 
         if(ventas.items.productos.length === 0){
@@ -279,38 +401,38 @@ $(function (){
 
     
     
-    $('select[name="search"]').select2({
-        language: 'es',
-        allowClear: true,
-        ajax:{
-            delay: 250,
-            type: 'POST',
-            url: window.location.pathname,
-            data: function (params){
-                var query = {
-                    term: params.term,
-                    action: 'search_productos'
-                }
-                return query;
-            },
-            processResults: function (data){
-                return {
-                    results: data
-                }
-            },
+    // $('select[name="search"]').select2({
+    //     language: 'es',
+    //     allowClear: true,
+    //     ajax:{
+    //         delay: 250,
+    //         type: 'POST',
+    //         url: window.location.pathname,
+    //         data: function (params){
+    //             var query = {
+    //                 term: params.term,
+    //                 action: 'search_productos'
+    //             }
+    //             return query;
+    //         },
+    //         processResults: function (data){
+    //             return {
+    //                 results: data
+    //             }
+    //         },
 
-        },
-        placeholder: 'Ingrese Descripcion',
-        minimumInputLength: 1,
-        templateResult: formatRepo,
-    }).on('select2:select', function(e){
-        var data = e.params.data;
-        data.cantidad = 1;
-        data.subtotal = 0.00;            
-        ventas.add(data);
-        $(this).val('').trigger('change.select2');
+    //     },
+    //     placeholder: 'Ingrese Descripcion',
+    //     minimumInputLength: 1,
+    //     templateResult: formatRepo,
+    // }).on('select2:select', function(e){
+    //     var data = e.params.data;
+    //     data.cantidad = 1;
+    //     data.subtotal = 0.00;            
+    //     ventas.add(data);
+    //     $(this).val('').trigger('change.select2');
     
-    });
+    // });
     
      ventas.list();
 

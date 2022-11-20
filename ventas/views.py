@@ -5,7 +5,7 @@ from django.views.generic import CreateView, DeleteView, ListView, UpdateView, V
 from django.contrib.auth.mixins import LoginRequiredMixin
 from ProyectoApp.models import *
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from ProyectoApp.forms import VentasForm
+from ProyectoApp.forms import VentasForm, ClientesForm
 from django.urls import reverse_lazy,reverse
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.utils.decorators import method_decorator
@@ -17,6 +17,7 @@ from django.template import Context
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 from django.contrib.staticfiles import finders
+from django.db.models import Q
 
 import json
 # Create your views here.
@@ -76,11 +77,14 @@ class VentasCreateView(LoginRequiredMixin, ValidacionPermiso, CreateView):
             action = request.POST['action']
             if action == 'search_productos':
                 data = []
-                prods = Producto.objects.filter(nombre__icontains=request.POST['term'][0:10])
-                for i in prods:
+                term = request.POST['term']
+                productos = Producto.objects.filter()
+                if len(term):
+                    productos = productos.filter(nombre__icontains=term)
+                for i in productos:
                     item = i.toJSON()
-                    #item['value'] = i.nombre
-                    item['text'] = i.nombre
+                    item['value'] = i.nombre
+                    #item['text'] = i.nombre
                     data.append(item)
             elif action == 'add':
                 #PROCESO ALMACENADO
@@ -104,6 +108,19 @@ class VentasCreateView(LoginRequiredMixin, ValidacionPermiso, CreateView):
                         det.subtotal = float(i['subtotal'])
                         det.save();
                     data = {'id': sale.id}
+            elif action == 'search_clientes':
+                data = []
+                term = request.POST['term']
+                clientes = Clientes.objects.filter(
+                    Q(nombre__icontains=term) | Q(apellido__icontains=term) | Q(dni__icontains=term))[0:10]
+                for i in clientes:
+                    item = i.toJSON()
+                    item['text'] = i.get_full_name()
+                    data.append(item)
+            elif action == 'create_cliente':
+                with transaction.atomic():
+                    frmCliente = ClientesForm(request.POST)
+                    data = frmCliente.save()
             else:
                 data['error'] = 'No ha ingresado a ninguna opción'
         except Exception as e:
@@ -117,6 +134,7 @@ class VentasCreateView(LoginRequiredMixin, ValidacionPermiso, CreateView):
         context['list_url'] = self.success_url
         context['action'] = 'add'
         context['det'] = []
+        context['frmCliente'] = ClientesForm()
         return context
 
 
@@ -132,16 +150,26 @@ class VentasUpdateView(LoginRequiredMixin, ValidacionPermiso, UpdateView):
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
 
+    def get_form(self, form_class= None):
+        instance = self.get_object()
+        form =  VentasForm(instance=instance)
+        form.fields['cliente'].queryset = Clientes.objects.filter(id=instance.cliente.id)
+        return form
+
     def post(self, request, *args, **kwargs):
         data = {}
         try:
             action = request.POST['action']
             if action == 'search_productos':
                 data = []
-                prods = Producto.objects.filter(nombre__icontains=request.POST['term'][0:10])
-                for i in prods:
+                term = request.POST['term']
+                productos = Producto.objects.filter()
+                if len(term):
+                    productos = productos.filter(nombre__icontains=term)
+                for i in productos:
                     item = i.toJSON()
                     item['value'] = i.nombre
+                    #item['text'] = i.nombre
                     data.append(item)
             elif action == 'edit':
                 #PROCESO ALMACENADO
@@ -165,6 +193,19 @@ class VentasUpdateView(LoginRequiredMixin, ValidacionPermiso, UpdateView):
                         det.subtotal = float(i['subtotal'])
                         det.save();
                     data = {'id': sale.id}
+            elif action == 'search_clientes':
+                data = []
+                term = request.POST['term']
+                clientes = Clientes.objects.filter(
+                    Q(nombre__icontains=term) | Q(apellido__icontains=term) | Q(dni__icontains=term))[0:10]
+                for i in clientes:
+                    item = i.toJSON()
+                    item['text'] = i.get_full_name()
+                    data.append(item)
+            elif action == 'create_cliente':
+                with transaction.atomic():
+                    frmCliente = ClientesForm(request.POST)
+                    data = frmCliente.save()
             else:
                 data['error'] = 'No ha ingresado a ninguna opción'
         except Exception as e:
@@ -192,6 +233,7 @@ class VentasUpdateView(LoginRequiredMixin, ValidacionPermiso, UpdateView):
         context['list_url'] = self.success_url
         context['action'] = 'edit'
         context['det'] = json.dumps(self.get_detalle_productos())
+        context['frmCliente'] = ClientesForm()
         return context
 
 class VentasDeleteView(LoginRequiredMixin, ValidacionPermiso, DeleteView):

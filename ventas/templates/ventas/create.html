@@ -22,7 +22,7 @@
 
             <hr>
             {% csrf_token %}
-    <form action="" method="post">
+    <form id="frmVenta" method="post">
             <div class="card-body">
                 <div class="row">
                     <div class="col-lg-8">
@@ -34,9 +34,20 @@
                                 <div class="form-group">
                                     <label>Buscador de Productos:</label>
                                     <div class="input-group">
-                                        <select class="form-control select2" style="width: 100%" name="search">
-
-                                        </select>
+                                        <div class="input-group mb-3">
+                                            {% comment %} <select class="form-control select2"  name="search"> </select> {% endcomment %}
+                                            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese descripcion" maxlength="50" name="search">
+                                            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                Opciones
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                              <li><a class="dropdown-item btnBuscarPro" href="#"><i class="bi bi-search"></i> Buscar Productos</a></li>
+                                              <li><a class="dropdown-item btnLimpiar" href="#"><i class="bi bi-x-lg"></i> Limpiar</a></li>
+                                              
+                                            </ul>
+                                          </div>
+                                          
+                                        
                                     </div>
                                     <hr>
                                     <button type="button" class="btn btn-warning btn-sm btnRemove">
@@ -78,7 +89,13 @@
                                 </div>
                                 <div class="form-group">
                                     <label>Cliente:</label>
-                                    {{ form.cliente }}
+                                    
+                                    <div class="input-group">
+                                        {{ form.cliente }}
+                                        <button class="btn btn-success btnAddCliente" type="button">
+                                            <i class="bi bi-person-add"></i>
+                                        </button>
+                                      </div>
                                 </div>
                                 <div class="form-group">
                                     <label>Subtotal:</label>
@@ -114,6 +131,76 @@
         
     </form>
 
+
+    <!--MODAL-->
+    <div class="modal fade" id="ModalCliente" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+        <form method="post" id="frmCliente" enctype="multipart/form-data">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalToggleLabel">
+                      <b> <i class="bi bi-person-fill-add"></i> Nuevo Registro Clientes</b> 
+                  </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    {% for field  in frmCliente.visible_fields %}
+                        <div class="form-group">
+                            <label for="email">{{ field.label }}:</label>
+                            {{ field|add_class:'form-control'|attr:'autocomplete:off' }}
+                        </div>
+                
+                    {% endfor %}
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-person-fill-add"></i> Guardar
+                    </button>
+                  </div>
+                </div>
+              </div>
+        </form>
+        
+      </div>
+<!--MODAL DE Producto-->
+      <div class="modal fade" id="ModalProducto" aria-hidden="true"  tabindex="-1">
+        <form method="post" id="" enctype="multipart/form-data">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalToggleLabel">
+                      <b> <i class="bi bi-search"></i> Busqueda de Productos</b> 
+                  </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <table class="table table-primary table-hover" id="tblBuscarProd" >
+                        <thead>
+                          <tr>
+                              
+                              <th scope="col">Producto</th>
+                              <th scope="col">Categoria</th>
+                              <th scope="col">Imagen</th>
+                              <th scope="col">Precio Unitario</th>
+                              <th scope="col">Opciones</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          
+                        </tbody>
+                      </table>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-person-fill-add"></i> Guardar
+                    </button>
+                  </div>
+                </div>
+              </div>
+        </form>
+        
+      </div>
+      
 
 
 {% endblock %}
@@ -163,7 +250,7 @@ var fecha_r = $('input[name="f_registro"]');
 
 {% block head_list %}
  <script src="{% static 'ventas/js/ventas.js' %}"></script>
-
+ <script src="{% static 'js/funciones.js' %}"></script>
  <script>
     ventas.items.productos = {{ det|safe }}
     //ventas.list();
