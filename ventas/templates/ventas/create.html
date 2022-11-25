@@ -35,14 +35,14 @@
                                     <label>Buscador de Productos:</label>
                                     <div class="input-group">
                                         <div class="input-group mb-3">
-                                            {% comment %} <select class="form-control select2"  name="search"> </select> {% endcomment %}
-                                            <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese descripcion" maxlength="50" name="search">
+                                            <select class="form-control select2"  name="search"> </select>
+                                            {% comment %} <input type="text" class="form-control" autocomplete="off" placeholder="Ingrese descripcion" maxlength="50" name="search"> {% endcomment %}
                                             <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                                 Opciones
                                             </button>
                                             <ul class="dropdown-menu dropdown-menu-end">
                                               <li><a class="dropdown-item btnBuscarPro" href="#"><i class="bi bi-search"></i> Buscar Productos</a></li>
-                                              <li><a class="dropdown-item btnLimpiar" href="#"><i class="bi bi-x-lg"></i> Limpiar</a></li>
+                                              <li><a class="dropdown-item btnLimpiar" ><i class="bi bi-x-lg"></i> Limpiar</a></li>
                                               
                                             </ul>
                                           </div>
@@ -61,7 +61,7 @@
                                       <tr>
                                           <th scope="col">Eliminar</th>
                                           <th scope="col">Producto</th>
-                                          <th scope="col">Categoria</th>
+                                          <th scope="col">Stock</th>
                                           <th scope="col">PVP</th>
                                           <th scope="col">Cantidad</th>
                                           <th scope="col">Subtotal</th>
@@ -179,8 +179,8 @@
                           <tr>
                               
                               <th scope="col">Producto</th>
-                              <th scope="col">Categoria</th>
                               <th scope="col">Imagen</th>
+                              <th scope="col">Stock</th>
                               <th scope="col">Precio Unitario</th>
                               <th scope="col">Opciones</th>
                           </tr>

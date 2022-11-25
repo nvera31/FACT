@@ -77,14 +77,25 @@ class VentasCreateView(LoginRequiredMixin, ValidacionPermiso, CreateView):
             action = request.POST['action']
             if action == 'search_productos':
                 data = []
+                ids_exclude = json.loads(request.POST['ids'])
                 term = request.POST['term']
-                productos = Producto.objects.filter()
+                productos = Producto.objects.filter(stock__gt=0)
                 if len(term):
                     productos = productos.filter(nombre__icontains=term)
-                for i in productos:
+                for i in productos.exclude(id__in=ids_exclude)[0:10]:
                     item = i.toJSON()
                     item['value'] = i.nombre
                     #item['text'] = i.nombre
+                    data.append(item)
+            elif action == 'search_autocomplete':
+                data = []
+                ids_exclude = json.loads(request.POST['ids'])
+                term = request.POST['term'].strip()
+                data.append({'id': term, 'text': term})
+                productos = Producto.objects.filter(nombre__icontains=term, stock__gt=0)
+                for i in productos.exclude(id__in=ids_exclude)[0:10]:
+                    item = i.toJSON()
+                    item['text'] = i.nombre
                     data.append(item)
             elif action == 'add':
                 #PROCESO ALMACENADO
@@ -107,6 +118,9 @@ class VentasCreateView(LoginRequiredMixin, ValidacionPermiso, CreateView):
                         det.precio = float(i['pvp'])
                         det.subtotal = float(i['subtotal'])
                         det.save();
+
+                        det.prod.stock -= det.cantidad
+                        det.prod.save();
                     data = {'id': sale.id}
             elif action == 'search_clientes':
                 data = []
@@ -162,14 +176,25 @@ class VentasUpdateView(LoginRequiredMixin, ValidacionPermiso, UpdateView):
             action = request.POST['action']
             if action == 'search_productos':
                 data = []
+                ids_exclude = json.loads(request.POST['ids'])
                 term = request.POST['term']
-                productos = Producto.objects.filter()
+                productos = Producto.objects.filter(stock__gt=0)
                 if len(term):
                     productos = productos.filter(nombre__icontains=term)
-                for i in productos:
+                for i in productos.exclude(id__in=ids_exclude)[0:10]:
                     item = i.toJSON()
                     item['value'] = i.nombre
                     #item['text'] = i.nombre
+                    data.append(item)
+            elif action == 'search_autocomplete':
+                data = []
+                ids_exclude = json.loads(request.POST['ids'])
+                term = request.POST['term'].strip()
+                data.append({'id': term, 'text': term})
+                productos = Producto.objects.filter(nombre__icontains=term, stock__gt=0)
+                for i in productos.exclude(id__in=ids_exclude)[0:10]:
+                    item = i.toJSON()
+                    item['text'] = i.nombre
                     data.append(item)
             elif action == 'edit':
                 #PROCESO ALMACENADO
@@ -192,6 +217,9 @@ class VentasUpdateView(LoginRequiredMixin, ValidacionPermiso, UpdateView):
                         det.precio = float(i['pvp'])
                         det.subtotal = float(i['subtotal'])
                         det.save();
+
+                        det.prod.stock -= det.cantidad
+                        det.prod.save();
                     data = {'id': sale.id}
             elif action == 'search_clientes':
                 data = []

@@ -79,6 +79,7 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=150, verbose_name= 'Nombre', unique=True)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
     imagen = models.ImageField(upload_to="producto", null=True, blank=True)
+    stock =  models.IntegerField(default=0, verbose_name='Stock')
     pvp = models.DecimalField(default=0.00, max_digits=9, decimal_places=2)
 
     def __str__(self):
@@ -87,6 +88,7 @@ class Producto(models.Model):
 #CONTENIDO NUEVO
     def toJSON(self):
         item = model_to_dict(self)
+        item['full_name'] = '{} / {}'. format(self.nombre, self.categoria.nombre)
         item['categoria'] = self.categoria.toJSON()
         item['imagen'] = self.get_image()
         item['pvp'] = format(self.pvp, '.2f')
@@ -151,6 +153,13 @@ class Ventas(models.Model):
         item['f_registro'] = self.f_registro.strftime('%Y-%m-%d')
         item['det'] = [i.toJSON() for i  in self.det_ventas_set.all()]
         return item
+    
+    #BORRA FACTURA Y AUMENTA STOCK
+    def delete(self, using=None, keep_parents=False):
+        for det in self.det_ventas_set.all():
+            det.prod.stock += det.cantidad
+            det.prod.save()
+        super(Ventas, self).delete()
 
     class Meta:
         verbose_name = 'Venta'

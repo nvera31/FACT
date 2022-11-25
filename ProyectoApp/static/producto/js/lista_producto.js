@@ -19,15 +19,27 @@ $(function (){
             {"data": "nombre"},
             {"data": "categoria.nombre"},
             {"data": "imagen"},
+            {"data": "stock"},
             {"data": "pvp"},
             {"data": "id"},
         ], columnDefs: [
+            {
+                targets: [-4],
+                class: 'text-center',
+                orderable: false,
+                render: function (data, type, row) {
+                    return '<img src="'+data+'" class="img-fluid d-block mx-auto" style="width: 20px; height: 20px;">';
+                }
+            },
             {
                 targets: [-3],
                 class: 'text-center',
                 orderable: false,
                 render: function (data, type, row) {
-                    return '<img src="'+data+'" class="img-fluid d-block mx-auto" style="width: 20px; height: 20px;">';
+                    if(data > 0){
+                        return '<span class="badge text-bg-success">'+data+'</span>'
+                    }
+                    return '<span class="badge text-bg-danger">'+data+'</span>'
                 }
             },
             {

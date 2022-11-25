@@ -10,6 +10,15 @@ var ventas ={
         total: 0.00,
         productos : []
     },
+
+    get_ids: function(){
+        var ids = [];
+        $.each(this.items.productos, function (key, value){
+            ids.push(value.id);
+        });
+        return ids;
+    },
+
     calcular_factura: function(){
         var fsubtotal = 0.00;
         var fiva = $('input[name="iva"]').val();
@@ -39,13 +48,21 @@ var ventas ={
             data: this.items.productos,
             columns: [
                 {"data": "id"},
-                {"data": "nombre"},
-                {"data": "categoria.nombre"},
+                {"data": "full_name"},
+                {"data": "stock"},
                 {"data": "pvp"},
                 {"data": "cant"},
                 {"data": "subtotal"},
 
             ], columnDefs: [
+                {
+                    targets: [-4],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<span class="badge bg-info text-dark">'+data+'</span>';
+                    }
+                },
                 {
                     targets: [0],
                     class: 'text-center',
@@ -90,7 +107,7 @@ var ventas ={
             rowCallback(row, data, displayNum, displayIndex, dataIndex){
                 $(row).find('input[name="cant"]').TouchSpin({
                     min: 1,
-                    max:100000000000,
+                    max:data.stock,
                     step: 1
                 });
             },
@@ -98,6 +115,9 @@ var ventas ={
                 
             }
         });
+        console.clear();
+        console.log(this.items);
+        console.log(this.get_ids());
     },
 
 };
@@ -105,6 +125,10 @@ var ventas ={
 //BUSQUEDA CON IMAGEN
 function formatRepo(repo) {
     if (repo.loading) {
+        return repo.text;
+    }
+
+    if (!Number.isInteger(repo.id)){
         return repo.text;
     }
 
@@ -117,8 +141,8 @@ function formatRepo(repo) {
         '<div class="col-lg-11 text-left shadow-sm">' +
         //'<br>' +
         '<p style="margin-bottom: 0;">' +
-        '<b>Nombre:</b> ' + repo.nombre + '<br>' +
-        '<b>Categoría:</b> ' + repo.categoria.nombre + '<br>' +
+        '<b>Nombre:</b> ' + repo.full_name + '<br>' +
+        '<b>Stock:</b> ' + repo.stock + '<br>' +
         '<b>PVP:</b> <span class="badge text-bg-warning">$'+repo.pvp+'</span>'+
         '</p>' +
         '</div>' +
@@ -172,40 +196,40 @@ function alert_action(title,content,callback, cancel){
 
 //BUSCAR PRODUCTOS
 $(function (){
-    $( 'input[name="search"]' ).autocomplete({
-        source: function(request, response){
-            $.ajax({
-                //TRABAJA CON LA VISTA ACTUAL
-                url: window.location.pathname,
-                type: 'POST',
-                data: {
-                    'action': 'search_productos',
-                    'term': request.term
-                },
-                dataType: 'json',
-            }).done(function (data) {
-                response(data);
+    // $( 'input[name="search"]' ).autocomplete({
+    //     source: function(request, response){
+    //         $.ajax({
+    //             //TRABAJA CON LA VISTA ACTUAL
+    //             url: window.location.pathname,
+    //             type: 'POST',
+    //             data: {
+    //                 'action': 'search_productos',
+    //                 'term': request.term
+    //             },
+    //             dataType: 'json',
+    //         }).done(function (data) {
+    //             response(data);
 
-            }).fail(function (jqXHR, textStatus, errorThrown) {
-                //alert(textStatus+':'+errorThrown);
-            }).always(function (data) {
+    //         }).fail(function (jqXHR, textStatus, errorThrown) {
+    //             //alert(textStatus+':'+errorThrown);
+    //         }).always(function (data) {
 
-            });
-        },
-        delay: 500,
-        minLength: 1,
-        select: function( event, ui){
-            event.preventDefault();
-            console.clear();
-            ui.item.cantidad = 1;
-            ui.item.subtotal = 0.00;            
-            console.log(ventas.items);
+    //         });
+    //     },
+    //     delay: 500,
+    //     minLength: 1,
+    //     select: function( event, ui){
+    //         event.preventDefault();
+    //         console.clear();
+    //         ui.item.cantidad = 1;
+    //         ui.item.subtotal = 0.00;            
+    //         console.log(ventas.items);
 
-            ventas.add(ui.item);
+    //         ventas.add(ui.item);
 
-            $(this).val('');
-        }
-        });
+    //         $(this).val('');
+    //     }
+    //     });
     
 //BUSQUEDA CLIENTES
     $('select[name="cliente"]').select2({
@@ -294,7 +318,7 @@ $(function (){
     });
 
     $('.btnLimpiar').on('click', function(){
-        $('input[name="search"]').val('').focus();
+        $('select[name="search"]').val('').focus();
     });
 
     //MODAL DE BUSQUEDA DE PRODUCTOS
@@ -309,25 +333,34 @@ $(function (){
                 type: 'POST',
                 data: {
                     'action': 'search_productos',
-                    'term': $('input[name="search"]').val()
+                    'ids': JSON.stringify(ventas.get_ids()),
+                    'term': $('select[name="search"]').val()
                 },
                 dataSrc: ""
             },
             columns: [
-                {"data": "nombre"},
-                {"data": "categoria.nombre"},
+                {"data": "full_name"},
                 {"data": "imagen"},
+                {"data": "stock"},
                 {"data": "pvp"},
                 {"data": "id"},
             ], columnDefs: [
                 {
-                    targets: [-3],
+                    targets: [-4],
                     class: 'text-center',
                     orderable: false,
                     render: function (data, type, row) {
                         return '<img src="'+data+'" class="img-fluid d-block mx-auto" style="width: 20px; height: 20px;">';
                     }
                 },
+                {
+                    targets: [-3],
+                    class: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return '<span class="badge bg-info text-dark">'+data+'</span>';
+                    }
+                },     
                 {
                     targets: [-2],
                     class: 'text-center',
@@ -365,12 +398,12 @@ $(function (){
             producto.cantidad = 1;
             producto.subtotal = 0.00; 
             ventas.add(producto);
-            
+            tblBuscarPro.row($(this).parents('tr')).remove().draw();            
    
     });
 
 //EVENTO SUBMIT AGREGAR VENTAS
-    $('frmVenta').on('submit', function (e){
+    $('#frmVenta').on('submit', function (e){
         e.preventDefault();
 
         if(ventas.items.productos.length === 0){
@@ -400,39 +433,43 @@ $(function (){
     });   
 
     
-    
-    // $('select[name="search"]').select2({
-    //     language: 'es',
-    //     allowClear: true,
-    //     ajax:{
-    //         delay: 250,
-    //         type: 'POST',
-    //         url: window.location.pathname,
-    //         data: function (params){
-    //             var query = {
-    //                 term: params.term,
-    //                 action: 'search_productos'
-    //             }
-    //             return query;
-    //         },
-    //         processResults: function (data){
-    //             return {
-    //                 results: data
-    //             }
-    //         },
+    //BUSCAR PRODUCTOS EN VENTAS
+    $('select[name="search"]').select2({
+        language: 'es',
+        allowClear: true,
+        ajax:{
+            delay: 250,
+            type: 'POST',
+            url: window.location.pathname,
+            data: function (params){
+                var query = {
+                    term: params.term,
+                    action: 'search_autocomplete',
+                    ids: JSON.stringify(ventas.get_ids())
+                }
+                return query;
+            },
+            processResults: function (data){
+                return {
+                    results: data
+                }
+            },
 
-    //     },
-    //     placeholder: 'Ingrese Descripcion',
-    //     minimumInputLength: 1,
-    //     templateResult: formatRepo,
-    // }).on('select2:select', function(e){
-    //     var data = e.params.data;
-    //     data.cantidad = 1;
-    //     data.subtotal = 0.00;            
-    //     ventas.add(data);
-    //     $(this).val('').trigger('change.select2');
+        },
+        placeholder: 'Ingrese Descripcion',
+        minimumInputLength: 1,
+        templateResult: formatRepo,
+    }).on('select2:select', function(e){
+        var data = e.params.data;
+        if(!Number.isInteger(data.id)){
+            return false;
+        }
+        data.cantidad = 1;
+        data.subtotal = 0.00;            
+        ventas.add(data);
+        $(this).val('').trigger('change.select2');
     
-    // });
+    });
     
      ventas.list();
 
