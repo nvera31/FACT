@@ -17,9 +17,9 @@ body{
 hr.h-color{
     background: #eee;
 }
-
+/* Activar seccion */
 .sidebar li.active{
-    background-color: white;
+    background-color: #fff;
     border-radius: 8px;
 }
 

@@ -67,12 +67,12 @@
         </div>
 
         <ul class="list-unstyled px-2">
-          <li class="{% if request.path == '/' %}active{% endif %}">
+          <li class="{% if request.path == '/index/' %}active{% endif %}">
             <a href="{% url 'Home' %}" class="text-decoration-none px-3 py-2 d-block"
               ><i class="bi bi-house"></i> Inicio</a
             >
           </li>
-          <li class="{% if request.path == '/listar/' %}active{% endif %}">
+          <li class="{% if request.path == '/categoria/listar/' %}active{% endif %}">
             <a href="{% url 'listar' %}" class="text-decoration-none px-3 py-2 d-block"
               ><i class="bi bi-card-list"></i> Categorias</a
             >
@@ -83,7 +83,7 @@
               class="text-decoration-none px-3 py-2 d-block d-flex justify-content-between"
             >
               <span><i class="bi bi-chat-left-text"></i> Productos</span>
-              <span class="bg-dark rounded-pill text-white py-0 px-2">02</span>
+              {% comment %} <span class="bg-dark rounded-pill text-white py-0 px-2">02</span> {% endcomment %}
             </a>
           </li>
           <li class="">
@@ -125,8 +125,8 @@
         <hr />
 
         <div>
-          <span style="color: #d9cc00">Perfil: </span>
-          <img src="{{ request.user.get_image }}" alt="perfil" width="100" height="100" />
+          <span style="color: #d9cc00">{{ request.user.get_full_name }}</span>
+          <img src="{{ request.user.get_image }}" class="rounded-circle mx-auto d-block" alt="perfil" width="130" height="130" />
         </div>
       </div>
 
@@ -187,7 +187,7 @@
             <!--PERFIL NOMBRE-->
             {% if request.user.username %}
             <ul class="navbar-nav mb-2 mb-lg-0">
-                <div class="dropdown ms-2 me-2">
+                <div class="dropdown ms-2 me-5">
                     <button
                       type="button"
                       class="btn btn-primary dropdown-toggle"
@@ -210,9 +210,9 @@
             {% endif %}
             <!--SALIR-->
             <ul class="navbar-nav mb-2 mb-lg-0">
-                <div class="dropdown me-2">
+                <div class="dropdown me-5">
                     <a class="nav-link" href="{% url 'logout' %}">
-                        <i class="bi bi-plug"> Salir</i>
+                      <i class="bi bi-plugin"></i> Salir</i>
                       </a>
                 </div>
               </ul>

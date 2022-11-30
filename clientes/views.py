@@ -16,7 +16,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 class ClienteListView(LoginRequiredMixin, ValidacionPermiso, ListView):
     model = Clientes
     template_name = 'clientes/clientes.html'
-    #permission_required = 'erp.view_client'
+    permission_required = 'view_clientes'
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -50,7 +50,7 @@ class ClienteCreateView(LoginRequiredMixin, ValidacionPermiso, CreateView):
     form_class = ClientesForm
     template_name = 'clientes/create.html'
     success_url = reverse_lazy('listar_cliente')
-    #permission_required = 'erp.add_client'
+    permission_required = 'add_clientes'
     url_redirect = success_url
 
     def dispatch(self, request, *args, **kwargs):
@@ -83,7 +83,7 @@ class ClienteUpdateView(LoginRequiredMixin, ValidacionPermiso, UpdateView):
     form_class = ClientesForm
     template_name = 'clientes/create.html'
     success_url = reverse_lazy('listar_cliente')
-    #permission_required = 'erp.change_client'
+    permission_required = 'change_clientes'
     url_redirect = success_url
 
     def dispatch(self, request, *args, **kwargs):

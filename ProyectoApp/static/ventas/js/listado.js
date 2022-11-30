@@ -2,7 +2,7 @@ var tblventa;
 
 function format(d) {
     console.log(d);
-    var html = '<table class="table">';
+    var html = '<table class="table table-warning">';
     html += '<thead class="table-dark">';
     html += '<tr><th scope="col">Producto</th>';
     html += '<th scope="col">Categoría</th>';
@@ -48,7 +48,7 @@ $(function () {
                 "data":     null,
                 "defaultContent": ''
             }, 
-            {"data": "cliente.nombre"},
+            {"data": "cliente.full_name"},
             {"data": "f_registro"},
             {"data": "subtotal"},
             {"data": "iva"},

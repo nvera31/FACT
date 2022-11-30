@@ -6,12 +6,13 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from ProyectoApp.models import *
-
+from ProyectoApp.mixin import ValidacionPermiso
 from django.db.models.functions import Coalesce
 from django.db.models import Sum, DecimalField
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
-class ReportesVentasView(TemplateView):
+class ReportesVentasView(LoginRequiredMixin, ValidacionPermiso,TemplateView):
     template_name = 'reportes/reportes.html'
 
     @method_decorator(csrf_exempt)

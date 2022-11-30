@@ -15,7 +15,7 @@ from ProyectoApp.forms import ProductoForm
 class ProductoListView(LoginRequiredMixin,ValidacionPermiso,ListView):
     model = Producto
     template_name = 'producto/productos.html'
-    permission_required = 'view_producto', 'change_producto', 'add_producto', 'delete_producto'
+    permission_required = 'view_producto'
 
     @method_decorator(csrf_exempt)
     #@method_decorator(login_required)

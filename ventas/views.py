@@ -12,20 +12,23 @@ from django.utils.decorators import method_decorator
 from django.db import transaction
 from ProyectoApp.mixin import ValidacionPermiso
 
-from django.conf import settings
+from Proyecto.wsgi import *
+from Proyecto import settings
+#from django.conf import settings
+
 from django.template import Context
 from django.template.loader import get_template
-from xhtml2pdf import pisa
+#from xhtml2pdf import pisa
 from django.contrib.staticfiles import finders
 from django.db.models import Q
-
+from weasyprint import HTML, CSS
 import json
 # Create your views here.
 
 class VentasListView(LoginRequiredMixin, ValidacionPermiso, ListView):
     model = Ventas
     template_name = 'ventas/ventas.html'
-    #permission_required = 'erp.view_sale'
+    permission_required = 'view_ventas'
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -64,7 +67,7 @@ class VentasCreateView(LoginRequiredMixin, ValidacionPermiso, CreateView):
     form_class = VentasForm
     template_name = 'ventas/create.html'
     success_url = reverse_lazy('listar_venta')
-    #permission_required = 'erp.add_sale'
+    permission_required = 'add_ventas'
     url_redirect = success_url
 
     @method_decorator(csrf_exempt)
@@ -157,7 +160,7 @@ class VentasUpdateView(LoginRequiredMixin, ValidacionPermiso, UpdateView):
     form_class = VentasForm
     template_name = 'ventas/create.html'
     success_url = reverse_lazy('listar_venta')
-    #permission_required = 'erp.change_sale'
+    permission_required = 'change_ventas'
     url_redirect = success_url
 
     @method_decorator(csrf_exempt)
@@ -268,7 +271,7 @@ class VentasDeleteView(LoginRequiredMixin, ValidacionPermiso, DeleteView):
     model = Ventas
     template_name = 'ventas/delete.html'
     success_url = reverse_lazy('listar_venta')
-    #permission_required = 'erp.delete_sale'
+    permission_required = 'delete_ventas'
     url_redirect = success_url
 
     def dispatch(self, request, *args, **kwargs):
@@ -292,25 +295,25 @@ class VentasDeleteView(LoginRequiredMixin, ValidacionPermiso, DeleteView):
 
 
 class VentasFacturaPdfView(View):
-    def link_callback(self, uri, rel):
-        sUrl = settings.STATIC_URL        # Typically /static/
-        sRoot = settings.STATIC_ROOT      # Typically /home/userX/project_static/
-        mUrl = settings.MEDIA_URL         # Typically /media/
-        mRoot = settings.MEDIA_ROOT       # Typically /home/userX/project_static/media/
+    # def link_callback(self, uri, rel):
+    #     sUrl = settings.STATIC_URL        # Typically /static/
+    #     sRoot = settings.STATIC_ROOT      # Typically /home/userX/project_static/
+    #     mUrl = settings.MEDIA_URL         # Typically /media/
+    #     mRoot = settings.MEDIA_ROOT       # Typically /home/userX/project_static/media/
 
-        if uri.startswith(mUrl):
-           path = os.path.join(mRoot, uri.replace(mUrl, ""))
-        elif uri.startswith(sUrl):
-           path = os.path.join(sRoot, uri.replace(sUrl, ""))
-        else:
-           return uri
+    #     if uri.startswith(mUrl):
+    #        path = os.path.join(mRoot, uri.replace(mUrl, ""))
+    #     elif uri.startswith(sUrl):
+    #        path = os.path.join(sRoot, uri.replace(sUrl, ""))
+    #     else:
+    #        return uri
 
-        # make sure that file exists
-        if not os.path.isfile(path):
-            raise Exception(
-                'media URI must start with %s or %s' % (sUrl, mUrl)
-            )
-        return path
+    #     # make sure that file exists
+    #     if not os.path.isfile(path):
+    #         raise Exception(
+    #             'media URI must start with %s or %s' % (sUrl, mUrl)
+    #         )
+    #     return path
 
 
 
@@ -321,17 +324,14 @@ class VentasFacturaPdfView(View):
             context = {
                 'venta': Ventas.objects.get(pk=self.kwargs['pk']),
                 'comp' : {'nombre': 'ALMACENES MEMO S.A', 'ruc': '1234567890123', 'direccion': 'Paris Chiquito, Ecuador'},
-                'icon' : '{}{}'.format(settings.MEDIA_URL, 'logo.png')
+                'icon' : '{}{}'.format(settings.MEDIA_URL, 'exito.png')
             }
             html = template.render(context)
-            response = HttpResponse(content_type='application/pdf')
-            #response['Content-Disposition'] = 'attachment; filename="report.pdf"'
-            pisa_status = pisa.CreatePDF(
-                html, dest=response,
-                link_callback=self.link_callback
-            )
-                
-            return response
+            css_url = os.path.join(settings.BASE_DIR,'ProyectoApp/static/vendor/bootstrap/css/bootstrap.min.css')
+            pdf = HTML(string=html, base_url=request.build_absolute_uri()).write_pdf(stylesheets=[CSS(css_url)])
+            return HttpResponse(pdf, content_type='application/pdf')
+
+           
         except:
             pass
         return HttpResponseRedirect(reverse_lazy('listar_venta'))
